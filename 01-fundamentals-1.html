@@ -24,10 +24,22 @@
             color: white;
         }
     </style>
+    <script>
+        let js = 'amazing';
+        if (js === 'amazing') {
+            alert('JavaScript is amazing! This message is shown BEFORE the page loads because the JS script is located in the <head> element of the webpage.');
+        }
+        
+        console.log(1 + 2 + 3 + 100); // Look for this in the Chrome JS console.
+    </script>
 </head>
 
 <body>
     <h1>JavaScript Fundamentals – Part 1</h1>
+    <!-- <script> NOTE: this does not work as intended.
+        alert('JavaScript is amazing! This message is shown AFTER the page loads because the JS script is located at the end of the <body> element of the webpage.');
+    </script> -->
+    <script src="./01-fundamentals-1-script.js"></script>
 </body>
 
 </html>
