@@ -1,2 +1,2 @@
-# the-complete-javascript-course-2021
-By Jonas Schmedtmann
+# My files related to "The Complete JavaScript Course 2021"
+A course by Jonas Schmedtmann on Udemy
