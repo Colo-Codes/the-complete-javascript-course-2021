@@ -26,6 +26,12 @@ const age = 40;
 const job = 'programmer';
 
 console.log(`My name is ${myName2} and 
-I'm a ${age} years old ${job}!`);
+I'm a ${age} years old ${job}! 👨‍💻`);
 
-//
+// Type conversion
+// Original value:
+let year = '2021';
+console.log(typeof year); // string
+// Converting the type:
+year = Number(year);
+console.log(typeof year); // number
