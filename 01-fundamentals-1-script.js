@@ -20,11 +20,12 @@ console.log(typeof thisIsGlobal);
 
 console.log(typeof null);
 
-// String template literals
+// String template literals (ES6)
 const myName2 = 'Damian';
 const age = 40;
 const job = 'programmer';
 
-console.log(`My name is ${myName2} and I'm a ${age} years old ${job}!`);
+console.log(`My name is ${myName2} and 
+I'm a ${age} years old ${job}!`);
 
 //
