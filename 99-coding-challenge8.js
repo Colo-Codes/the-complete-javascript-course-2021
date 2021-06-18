@@ -46,8 +46,8 @@ for (let i = 0; i < bills.length; i++) {
 }
 
 console.log(`The bills are [${bills}], 
-the tips are [${tips}], 
-and the totals are [${totals}] 💸 💸 💸 💸 💸`);
+    the tips are [${tips}], 
+    and the totals are [${totals}] 💸 💸 💸 💸 💸`);
 
 function calcAverage(arr) {
     let sum = 0;
@@ -58,3 +58,4 @@ function calcAverage(arr) {
 }
 
 console.log(`Average total money spent $${calcAverage(totals)} 💵`);
+console.log(`Average money spent on tips $${calcAverage(tips)} 💵`);
