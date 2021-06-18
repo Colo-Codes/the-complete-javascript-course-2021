@@ -15,8 +15,17 @@ const damianObject = {
     birthYear: 1981, // 👴
 
     // Methods
-    age: function (currentYear) { return currentYear - damianObject.birthYear; },
+    // age: function (currentYear) { return currentYear - damianObject.birthYear; }, // This is not DRY
+    // age: function (currentYear) { return currentYear - this.birthYear; }, // Using the 'this' keyword
+    age: function (currentYear) {
+        this.myAge = currentYear - this.birthYear;
+        return this.myAge;
+    },
     fullName: (firstName, lastName) => `${firstName} ${lastName}`
 }
 
 console.log(damianObject.age(2021), '👴');
+console.log(damianObject.myAge, '👴');
+console.log(damianObject.myAge, '👴');
+console.log(damianObject.myAge, '👴');
+console.log(damianObject.myAge, '👴');
