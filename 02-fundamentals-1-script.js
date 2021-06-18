@@ -21,7 +21,9 @@ const damianObject = {
         this.myAge = currentYear - this.birthYear;
         return this.myAge;
     },
-    fullName: (firstName, lastName) => `${firstName} ${lastName}`
+    fullName: function () {
+        return `${this.firstName} ${this.lastName}`;
+    }
 }
 
 console.log(damianObject.age(2021), '👴');
@@ -29,3 +31,5 @@ console.log(damianObject.myAge, '👴');
 console.log(damianObject.myAge, '👴');
 console.log(damianObject.myAge, '👴');
 console.log(damianObject.myAge, '👴');
+
+console.log(`${damianObject.firstName}'s full name is ${damianObject.fullName()}, he was born in ${damianObject.birthYear}, and he is now ${damianObject.age(2021)} years old 👴`);
