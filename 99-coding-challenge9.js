@@ -52,3 +52,4 @@ const printForecast = (arr) => {
 
 printForecast([17, 21, 23]);
 printForecast([12, 5, -5, 0, 4]);
+printForecast([12, 5, -5, 0, 4, 'error', 12, 'error']);
