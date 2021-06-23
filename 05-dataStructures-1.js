@@ -12,6 +12,10 @@ const restaurant = {
     starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
     mainMenu: ['Pizza', 'Pasta', 'Risotto'],
 
+    order: function (starterIndex, mainIndex) {
+        return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]];
+    },
+
     openingHours: {
         thu: {
             open: 12,
@@ -39,3 +43,15 @@ console.log(a, b, c);
 // New way, using destructuring:
 const [x, y, z] = arr;
 console.log(x, y, z);
+
+// Working with destructuring
+
+let [main, , secondary] = restaurant.categories;
+console.log(main, secondary);
+// Interchanging the values of the variables:
+[main, secondary] = [secondary, main];
+console.log(main, secondary);
+
+// Receive 2 return values from a function and deconstruct them
+const [starter, main2] = restaurant.order(1, 2);
+console.log(starter, main2);
