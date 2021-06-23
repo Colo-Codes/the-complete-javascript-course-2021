@@ -32,6 +32,8 @@ const restaurant = {
     },
 };
 
+// *** Array destructuring ***
+
 // Destructuring example
 
 const arr = [1, 2, 3];
@@ -67,3 +69,12 @@ console.log(k, l, m, n);
 const unknownArr = [9, 8];
 const [p = 0, q = 0, r = 0, s = 0] = unknownArr; // Destructuring with default values
 console.log(p, q, r, s);
+
+// *** Object destructuring ***
+
+// We need to use variable names that exactly match the property names in the object (the order is not important because an object is not iterative)
+const { name, openingHours, categories } = restaurant;
+console.log(name, openingHours, categories);
+// Using variables with different names:
+const { name: restaurantName, openingHours: restaurantHours, categories: restaurantCategories } = restaurant;
+console.log(restaurantName, restaurantHours, restaurantCategories);
