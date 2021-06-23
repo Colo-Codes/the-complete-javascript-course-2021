@@ -35,7 +35,12 @@ const restaurant = {
         console.log(
             `Order received! ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} at ${time}`
         );
+    },
+
+    orderPasta: function (ing1, ing2, ing3) {
+        console.log(`Your pasta order is ready! Deliciously made with ${ing1}, ${ing2} and ${ing3}`);
     }
+
 };
 
 // *** Array destructuring ***
@@ -135,3 +140,8 @@ console.log(newJoinedArray);
 const myName = 'Damian';
 const myNameLetters = [...myName, ' ', 'D.'];
 console.log(myNameLetters);
+
+// Spread on function parameters
+const ingredients = [prompt('Let\'s make pasta! Ingredient 1?'), prompt('Ingredient 2?'), prompt('Ingredient 3?')];
+console.log('Ingredients:', ingredients);
+restaurant.orderPasta(...ingredients);
