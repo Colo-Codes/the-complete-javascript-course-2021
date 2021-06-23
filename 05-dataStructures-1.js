@@ -151,3 +151,9 @@ restaurant.orderPasta(...ingredients);
 // Spread operator on objects
 const newRestaurant = { founder: 'Damian', ...restaurant, foundedIn: 2021 };
 console.log(newRestaurant);
+
+// Spread operator on an object to copy it (behaves like Object.assign({}, object))
+const restaurantCopy = { ...restaurant };
+restaurantCopy.name = 'Crazy Ravioli';
+console.log(restaurantCopy.name);
+console.log(restaurant.name);
