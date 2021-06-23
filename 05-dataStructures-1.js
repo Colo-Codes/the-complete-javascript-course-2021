@@ -157,3 +157,34 @@ const restaurantCopy = { ...restaurant };
 restaurantCopy.name = 'Crazy Ravioli';
 console.log(restaurantCopy.name);
 console.log(restaurant.name);
+
+// *** Rest operator ***
+
+// The '...' operator, when used to the right of the '=' operator, is the 'spread' operator
+const arrX = [1, 2, ...[3, 4]];
+console.log(arrX);
+// The '...' operator, when used to the left of the '=' operator, is the 'rest' operator
+const [e, f, ...others] = [1, 2, 3, 4, 5];
+console.log(e, f, others);
+
+// Combining spread and rest
+const [pizza, , risotto, ...otherFood] = [...restaurant.mainMenu, ...restaurant.starterMenu]; // The rest element must be the last element
+console.log(pizza, risotto, otherFood);
+
+// Objects
+const { sat, ...weekDays } = restaurant.openingHours;
+console.log(sat, weekDays);
+
+// Function (using rest arguments)
+const add = function (...numbers) { // Rest arguments
+    let sum = 0;
+    for (let i = 0; i < numbers.length; i++) {
+        sum += numbers[i]
+    }
+    return sum;
+}
+console.log(add(1, 2, 3, 4, 5));
+console.log(add(1, 2, 3, 4, 5, 10, 20, 30));
+
+const v = [6, 6, 6];
+console.log(add(...v));
