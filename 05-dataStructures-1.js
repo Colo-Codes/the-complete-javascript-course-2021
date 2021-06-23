@@ -30,6 +30,12 @@ const restaurant = {
             close: 24,
         },
     },
+
+    orderDelivery: function ({ starterIndex, mainIndex, time, address }) { // Deconstructing object (as parameters)
+        console.log(
+            `Order received! ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} at ${time}`
+        );
+    }
 };
 
 // *** Array destructuring ***
@@ -75,9 +81,30 @@ console.log(p, q, r, s);
 // We need to use variable names that exactly match the property names in the object (the order is not important because an object is not iterative)
 const { name, openingHours, categories } = restaurant;
 console.log(name, openingHours, categories);
+
 // Using variables with different names:
 const { name: restaurantName, openingHours: restaurantHours, categories: restaurantCategories } = restaurant;
 console.log(restaurantName, restaurantHours, restaurantCategories);
+
 // Using variables with different names and default values:
 const { menuNotPresent: menuX = ['noMenu'], starterMenu: starters = ['noStarters'] } = restaurant;
 console.log(menuX, starters);
+
+// Mutating variables
+let a1 = 0;
+let b1 = 0;
+const obj = { a1: 10, b1: 20, c1: 30 };
+({ a1, b1 } = obj); // We need to include parenthesis because otherwise the '{' and '}' will be interpreted as code blocks.
+console.log(a1, b1);
+
+// Nested objects
+const { fri: { open, close } } = openingHours;
+console.log(open, close);
+
+// Deconstructing an object inside a method
+restaurant.orderDelivery({
+    time: '22:30',
+    address: 'Via del Sole, 21',
+    mainIndex: 1,
+    starterIndex: 3
+});
