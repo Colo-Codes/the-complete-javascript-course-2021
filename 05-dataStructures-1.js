@@ -136,12 +136,18 @@ console.log(mainMenuCopy);
 const newJoinedArray = [...restaurant.starterMenu, ...restaurant.mainMenu];
 console.log(newJoinedArray);
 
-// Spread operator on iterables (strings, arrays, maps, sets, but not objects)
+// Spread operator on iterables (strings, arrays, maps, sets (objects are not iterable, but they allow working with spread operator)
 const myName = 'Damian';
 const myNameLetters = [...myName, ' ', 'D.'];
 console.log(myNameLetters);
 
 // Spread on function parameters
-const ingredients = [prompt('Let\'s make pasta! Ingredient 1?'), prompt('Ingredient 2?'), prompt('Ingredient 3?')];
+const ingredients = [
+    // prompt('Let\'s make pasta! Ingredient 1?'), prompt('Ingredient 2?'), prompt('Ingredient 3?')
+];
 console.log('Ingredients:', ingredients);
 restaurant.orderPasta(...ingredients);
+
+// Spread operator on objects
+const newRestaurant = { founder: 'Damian', ...restaurant, foundedIn: 2021 };
+console.log(newRestaurant);
