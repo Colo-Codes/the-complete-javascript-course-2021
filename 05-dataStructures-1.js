@@ -31,7 +31,7 @@ const restaurant = {
         },
     },
 
-    orderDelivery: function ({ starterIndex, mainIndex, time, address }) { // Deconstructing object (as parameters)
+    orderDelivery: function ({ starterIndex, mainIndex, time, address }) { // Deconstructing a single object (as parameter)
         console.log(
             `Order received! ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} at ${time}`
         );
@@ -108,3 +108,12 @@ restaurant.orderDelivery({
     mainIndex: 1,
     starterIndex: 3
 });
+
+// *** Spread operator ***
+
+const array = [7, 8, 9];
+const newBadArray = [1, 2, 7, 8, 9];
+console.log(newBadArray);
+const newGoodArray = [1, 2, ...array]; // The '...' operator outputs the elements of the array
+console.log(newGoodArray);
+console.log(...newGoodArray);
