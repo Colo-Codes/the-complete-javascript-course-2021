@@ -130,3 +130,8 @@ console.log(mainMenuCopy);
 // Join arrays
 const newJoinedArray = [...restaurant.starterMenu, ...restaurant.mainMenu];
 console.log(newJoinedArray);
+
+// Spread operator on iterables (strings, arrays, maps, sets, but not objects)
+const myName = 'Damian';
+const myNameLetters = [...myName, ' ', 'D.'];
+console.log(myNameLetters);
