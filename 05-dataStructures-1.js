@@ -117,3 +117,16 @@ console.log(newBadArray);
 const newGoodArray = [1, 2, ...array]; // The '...' operator outputs the elements of the array
 console.log(newGoodArray);
 console.log(...newGoodArray);
+
+const newMenu = [...restaurant.mainMenu, 'Gnocci']; // This is a new array, not an alteration of the original one
+console.log(restaurant.mainMenu);
+console.log(newMenu);
+
+// Making a shallow copy of an array
+const mainMenuCopy = [...restaurant.mainMenu];
+console.log(restaurant.mainMenu);
+console.log(mainMenuCopy);
+
+// Join arrays
+const newJoinedArray = [...restaurant.starterMenu, ...restaurant.mainMenu];
+console.log(newJoinedArray);
