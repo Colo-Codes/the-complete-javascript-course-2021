@@ -78,3 +78,6 @@ console.log(name, openingHours, categories);
 // Using variables with different names:
 const { name: restaurantName, openingHours: restaurantHours, categories: restaurantCategories } = restaurant;
 console.log(restaurantName, restaurantHours, restaurantCategories);
+// Using variables with different names and default values:
+const { menuNotPresent: menuX = ['noMenu'], starterMenu: starters = ['noStarters'] } = restaurant;
+console.log(menuX, starters);
