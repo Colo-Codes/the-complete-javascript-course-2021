@@ -55,3 +55,10 @@ console.log(main, secondary);
 // Receive 2 return values from a function and deconstruct them
 const [starter, main2] = restaurant.order(1, 2);
 console.log(starter, main2);
+
+// Destructuring nested arrays
+const nestedArr = [2, 4, [5, 6]];
+const [i, , j] = nestedArr;
+console.log(i, j);
+const [k, l, [m, n]] = nestedArr;
+console.log(k, l, m, n);
