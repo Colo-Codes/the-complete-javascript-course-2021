@@ -62,3 +62,8 @@ const [i, , j] = nestedArr;
 console.log(i, j);
 const [k, l, [m, n]] = nestedArr;
 console.log(k, l, m, n);
+
+// Default destructuring values
+const unknownArr = [9, 8];
+const [p = 0, q = 0, r = 0, s = 0] = unknownArr; // Destructuring with default values
+console.log(p, q, r, s);
