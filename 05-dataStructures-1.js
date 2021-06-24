@@ -195,3 +195,43 @@ console.log(add(...v));
 
 // Method
 restaurant.orderPizza('cheese', 'mushrooms', 'onion', 'olives');
+
+// *** Short-circuiting operators
+
+// The || operator will return the first truthy value of all operands, or the last falsy value if all operands are falsy.
+// The && operator will return the first falsy value of all operands, or the last truthy value is all operands are truthy.
+
+// The short-circuiting is based in truthy or falsy values
+console.log(10 || 'string');        // -> 10
+console.log(false || 'string');     // -> string
+console.log('' || 'string');        // -> string
+console.log(true || 0);             // -> true
+console.log(undefined || null);     // -> null
+
+console.log(undefined || 0 || '' || 'string' || 40 || null);     // -> string
+
+const object1 = {
+    key1: 'value1'
+}
+// Using conditional
+console.log(object1.key1 ? object1.key1 : 10);  // -> value1
+// Using short-circuit
+console.log(object1.key1 || 10);                // -> value1
+
+console.log(10 && 'string');        // -> string
+console.log(false && 'string');     // -> false
+console.log('' && 'string');        // -> (empty)
+console.log(true && 0);             // -> 0
+console.log(undefined && null);     // -> undefined
+
+console.log(undefined && 0 && '' && 'string' && 40 && null);     // -> undefined
+
+const object2 = {
+    method1: function () { console.log('I\'m method 1!') }
+}
+// Using conditional
+if (object2.method1) {
+    object2.method1();                  // -> I'm method 1!
+}
+// Using short-circuit
+object2.method1 && object2.method1();   // -> I'm method 1!
