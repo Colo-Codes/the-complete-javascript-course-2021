@@ -235,3 +235,30 @@ if (object2.method1) {
 }
 // Using short-circuit
 object2.method1 && object2.method1();   // -> I'm method 1!
+
+// *** Nullish coalescing operator and optional chaining ***
+
+// Object elements
+
+const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+for (const day of days) {
+    const open = restaurant.openingHours[day]?.open ?? 'sorry, closed';
+    console.log(`On ${day}, we are open at: ${open}`);
+}
+
+// Methods
+
+console.log(restaurant.order?.(0, 1) ?? 'Method does not exist');
+// -> [ 'Focaccia', 'Pasta' ]
+console.log(restaurant.nonExistentMethod?.(0, 1) ?? 'Method does not exist');
+// -> Method does not exist
+
+// Arrays
+
+const users = [{ name: 'Damian', age: 40 }];
+
+console.log(users[0]?.name ?? 'User array empty');
+// -> Damian
+console.log(users[1]?.name ?? 'User array empty');
+// -> User array empty
