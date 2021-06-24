@@ -39,8 +39,12 @@ const restaurant = {
 
     orderPasta: function (ing1, ing2, ing3) {
         console.log(`Your pasta order is ready! Deliciously made with ${ing1}, ${ing2} and ${ing3}`);
-    }
+    },
 
+    orderPizza: function (mainIngredient, ...otherIngredients) {
+        console.log('Main ingredient:', mainIngredient);
+        console.log('Other ingredients:', otherIngredients);
+    }
 };
 
 // *** Array destructuring ***
@@ -188,3 +192,6 @@ console.log(add(1, 2, 3, 4, 5, 10, 20, 30));
 
 const v = [6, 6, 6];
 console.log(add(...v));
+
+// Method
+restaurant.orderPizza('cheese', 'mushrooms', 'onion', 'olives');
