@@ -388,3 +388,223 @@ console.log(positionsArr);
 console.log(new Set(staff).size);
 // -> 3
 
+// *** Maps ***
+
+const rest = new Map();
+rest.set('name', 'Classico Italiano');
+rest.set(1, 'Firenze, Italy');
+console.log(rest.set(2, 'Lisbon, Portugal'));
+/* ->
+Map(3) {
+  'name' => 'Classico Italiano',
+  1 => 'Firenze, Italy',
+  2 => 'Lisbon, Portugal'
+}
+*/
+// We can chain multiple set's, because each one creates a map as a result
+rest.set('categories', ['Italian', 'Pizzeria', 'Vegetarian', 'Organic']).set('open', 11).set('close', 23).set(true, 'We are open :D').set(false, 'We are closed :(');
+console.log(rest.get('name'));
+// -> Classico Italiano
+console.log(rest.get(true));
+// -> We are open :D
+console.log(rest.get(1));
+// -> Firenze, Italy
+
+// Cool use case
+const currentTime = 21;
+console.log(rest.get(rest.get('open') <= currentTime && rest.get('close') >= currentTime));
+// -> We are open :D
+
+// Check if a map has a key
+console.log(rest.has('categories'));
+// -> true
+
+// Delete a key-value pair
+console.log(rest.delete(2));
+// -> true
+console.log(rest);
+/* ->
+Map(7) {
+  'name' => 'Classico Italiano',
+  1 => 'Firenze, Italy',
+  'categories' => [ 'Italian', 'Pizzeria', 'Vegetarian', 'Organic' ],
+  'open' => 11,
+  'close' => 23,
+  true => 'We are open :D',
+  false => 'We are closed :('
+}
+*/
+
+// Get the size of a map
+console.log(rest.size);
+// -> 7
+
+// Delete a whole map
+// rest.clear();
+// console.log(rest);
+// -> Map(0) {}
+
+// Using arrays as keys
+
+rest.set([1, 2], 'Test');
+console.log(rest);
+/* ->
+Map(8) {
+  'name' => 'Classico Italiano',
+  1 => 'Firenze, Italy',
+  'categories' => [ 'Italian', 'Pizzeria', 'Vegetarian', 'Organic' ],
+  'open' => 11,
+  'close' => 23,
+  true => 'We are open :D',
+  false => 'We are closed :(',
+  [ 1, 2 ] => 'Test'
+}
+*/
+
+// But this will not work, because the array [1,2] we are using to retrieve the key is different from the [1,2] that was used to create it; they are in different locations of the heap:
+console.log(rest.get([1, 2]));
+// -> undefined
+
+// In order to solve this, we need to use the same array, and this is accomplished by using a variable:
+const arr2 = [1, 2];
+rest.set(arr2, 'Test2');
+console.log(rest.get(arr2));
+// -> Test2
+console.log(rest);
+/* ->
+Map(9) {
+  'name' => 'Classico Italiano',
+  1 => 'Firenze, Italy',
+  'categories' => [ 'Italian', 'Pizzeria', 'Vegetarian', 'Organic' ],
+  'open' => 11,
+  'close' => 23,
+  true => 'We are open :D',
+  false => 'We are closed :(',
+  [ 1, 2 ] => 'Test',
+  [ 1, 2 ] => 'Test2'
+}
+*/
+
+// Creating a Map with arrays
+
+const question = new Map([
+    ['question', 'What is the best programming language in the world?'],
+    [1, 'C'],
+    [2, 'Java'],
+    [3, 'JavaScript'],
+    ['correct', 3],
+    [true, 'Correct! 🎉'],
+    [false, 'Incorrect... 😢']
+]);
+
+console.log(question);
+/* ->
+Map(7) {
+  'question' => 'What is the best programming language in the world?',
+  1 => 'C',
+  2 => 'Java',
+  3 => 'JavaScript',
+  'correct' => 3,
+  true => 'Correct! 🎉',
+  false => 'Incorrect... 😢'
+}
+*/
+
+// Convert an object to a map
+
+console.log(Object.entries(openingHours)); // This returns an array of arrays
+const hoursMap = new Map(Object.entries(openingHours));
+console.log(hoursMap);
+/* ->
+Map(3) {
+  'thu' => { open: 12, close: 22 },
+  'fri' => { open: 11, close: 23 },
+  'sat' => { open: 0, close: 24 }
+}
+*/
+
+// Quiz app
+console.log(question.get('question'));
+for (const [key, value] of question) { // Just like with Object.entries(), but in this case the map is already an iterable
+    if (typeof key === 'number') console.log(`Answer ${key}: ${value}`);
+}
+// --- Asking user input
+// const answer = Number(prompt('Your answer:')) // Check on browser
+// --- End of input
+// console.log(question.get((answer === question.get('correct'))));
+/* ->
+What is the best programming language in the world?
+Answer 1: C
+Answer 2: Java
+Answer 3: JavaScript
+Correct! 🎉
+*/
+
+// Convert a map to array
+console.log([...question]);
+/* ->
+[
+  [ 'question', 'What is the best programming language in the world?' ],
+  [ 1, 'C' ],
+  [ 2, 'Java' ],
+  [ 3, 'JavaScript' ],
+  [ 'correct', 3 ],
+  [ true, 'Correct! 🎉' ],
+  [ false, 'Incorrect... 😢' ]
+]
+*/
+
+// Entries, keys, and values of maps
+console.log(question.entries());
+/* ->
+[Map Entries] {
+  [ 'question', 'What is the best programming language in the world?' ],
+  [ 1, 'C' ],
+  [ 2, 'Java' ],
+  [ 3, 'JavaScript' ],
+  [ 'correct', 3 ],
+  [ true, 'Correct! 🎉' ],
+  [ false, 'Incorrect... 😢' ]
+}
+*/
+console.log(question.keys());
+// -> [Map Iterator] { 'question', 1, 2, 3, 'correct', true, false }
+console.log(question.values());
+/* ->
+[Map Iterator] {
+  'What is the best programming language in the world?',
+  'C',
+  'Java',
+  'JavaScript',
+  3,
+  'Correct! 🎉',
+  'Incorrect... 😢'
+}
+*/
+
+console.log([...question.entries()]); // same as [...question]
+/* ->
+[
+  [ 'question', 'What is the best programming language in the world?' ],
+  [ 1, 'C' ],
+  [ 2, 'Java' ],
+  [ 3, 'JavaScript' ],
+  [ 'correct', 3 ],
+  [ true, 'Correct! 🎉' ],
+  [ false, 'Incorrect... 😢' ]
+]
+*/
+console.log([...question.keys()]);
+// -> [ 'question', 1, 2, 3, 'correct', true, false ]
+console.log([...question.values()]);
+/* ->
+[
+  'What is the best programming language in the world?',
+  'C',
+  'Java',
+  'JavaScript',
+  3,
+  'Correct! 🎉',
+  'Incorrect... 😢'
+]
+*/
