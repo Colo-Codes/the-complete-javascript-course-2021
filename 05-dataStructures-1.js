@@ -329,3 +329,62 @@ On thu we open at 12 and close at 22
 On fri we open at 11 and close at 23
 On sat we open at 0 and close at 24
 */
+
+// *** Sets ***
+
+const ordersSet = new Set(['Pasta', 'Pizza', 'Pizza', 'Risotto', 'Pizza', 'Pasta']); // The argument of Set must be iterable
+console.log(ordersSet);
+// -> Set(3) { 'Pasta', 'Pizza', 'Risotto' }
+
+console.log(new Set('Damian'));
+// -> Set(5) { 'D', 'a', 'm', 'i', 'n' }
+
+// Check the size of a Set
+console.log(ordersSet.size);
+// -> 3
+
+// Check if contains a value
+console.log(ordersSet.has('Pasta'));
+// -> true
+console.log(ordersSet.has('Bread'));
+// -> false
+
+// Add element to the set
+ordersSet.add('Garlic bread');
+ordersSet.add('Garlic bread');
+console.log(ordersSet);
+// -> Set(4) { 'Pasta', 'Pizza', 'Risotto', 'Garlic bread' }
+
+// Delete an element from a set
+ordersSet.delete('Risotto');
+console.log(ordersSet);
+// -> Set(3) { 'Pasta', 'Pizza', 'Garlic bread' }
+
+// Delete all elements from a set
+// ordersSet.clear();
+// console.log(ordersSet);
+// -> Set(0) {}
+
+// Looping on a Set
+for (const order of ordersSet)
+    console.log(order);
+/* ->
+Pasta
+Pizza
+Garlic bread
+*/
+
+// Set use case: remove duplicates on arrays
+
+const staff = ['Chef', 'Waiter', 'Manager', 'Waiter', 'Chef', 'Waiter'];
+const positions = new Set(staff);
+console.log(positions);
+// -> Set(3) { 'Chef', 'Waiter', 'Manager' }
+const positionsArr = [...new Set(staff)];
+console.log(positionsArr);
+// -> [ 'Chef', 'Waiter', 'Manager' ]
+
+// Counting how many unique positions are
+console.log(new Set(staff).size);
+// -> 3
+
