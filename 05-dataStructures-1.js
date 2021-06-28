@@ -608,3 +608,118 @@ console.log([...question.values()]);
   'Incorrect... 😢'
 ]
 */
+
+// *** Strings ***
+
+const airline = 'Qantas Australia';
+const plane = 'A320';
+const newPlane = 'A320neo';
+const passengerName = 'dAmiAn';
+const passengerLastName = '  Demasi  \n';
+const passengerFullName = 'Damian Demasi';
+const passengerEmail = 'damian.demasi.1@gmail.com';
+const priceGB = '288,97£';
+const announcement = 'All passengers come to boarding door 23. Boarding door 23!';
+const shortMessage = 'Go to gate 23!';
+const weatherMessage = 'Bad weather! All flights delayed...';
+
+console.log(plane[0]);
+// -> A
+
+// Methods
+console.log(plane.length);
+// -> 4
+console.log(airline.indexOf('alia'));
+// -> 12
+console.log(airline.lastIndexOf('a'));
+// -> 15
+console.log(airline.slice(airline.indexOf('A')));
+// -> Australia
+console.log(airline.slice(airline.indexOf('A'), airline.lastIndexOf('a') + 1));
+// -> Australia
+console.log(airline.slice(-6));
+// -> tralia
+console.log(airline.slice(3, -6));
+// -> tas Aus
+console.log(airline.toLowerCase());
+// -> qantas australia
+console.log(airline.toUpperCase());
+// -> QANTAS AUSTRALIA
+console.log(passengerLastName.trim());
+// -> Demasi
+console.log(priceGB.replace('£', '$').replace(',', '.'));
+// -> 288.97$
+// console.log(announcement.replace('door', 'gate')); // To replace all 'door' occurrences, we should use a regular expression
+// -> All passengers come to boarding gate 23. Boarding door 23!
+console.log(announcement.replace(/door/g, 'gate'));
+// -> All passengers come to boarding gate 23. Boarding gate 23!
+console.log(newPlane.includes('neo'));
+// -> true
+console.log(newPlane.startsWith('A3'));
+// -> true
+console.log(newPlane.endsWith('320'));
+// -> false
+console.log(passengerFullName.split(' '));
+// -> [ 'Damian', 'Demasi' ]
+const [first, last] = passengerFullName.split(' ');
+console.log(first, last);
+// -> Damian Demasi
+console.log(['Mr.', first, last.toUpperCase()].join(' '));
+// -> Mr. Damian DEMASI
+console.log(shortMessage.padStart(30, '#'));
+// -> ################Go to gate 23!
+console.log(shortMessage.padEnd(30, '#'));
+// -> Go to gate 23!################
+console.log(weatherMessage.repeat(5));
+// -> Bad weather! All flights delayed...Bad weather! All flights delayed...Bad weather! All flights delayed...Bad weather! All flights delayed...Bad weather! All flights delayed...
+
+
+console.log(passengerName);
+// -> dAmiAn
+console.log(passengerName[0].toUpperCase() + passengerName.slice(1).toLowerCase());
+// -> Damian
+
+const checkMiddleSeat = function (seat) {
+    let message;
+    // B and E are middle seats
+    seat = seat.slice(-1);
+    (seat === 'B' || seat === 'E') ? message = 'Middle seat :(' : message = 'Not a middle seat!';
+    console.log(message);
+}
+
+checkMiddleSeat('11B');
+checkMiddleSeat('112C');
+checkMiddleSeat('1E');
+
+console.log(passengerEmail);
+// -> damian.demasi.1@gmail.com
+let loginEmail = '  Damian.Demasi.1@Gmail.Com  \n';
+console.log(loginEmail === passengerEmail ? 'Login correct!' : 'Login failed...');
+// -> Login failed...
+let cleanLoginEmail = loginEmail.toLowerCase().trim();
+console.log(cleanLoginEmail === passengerEmail ? 'Login correct!' : 'Login failed...');
+// -> Login correct!
+
+const capitalisator = function (name) {
+    const nameArr = name.split(' ');
+    const newNameArr = [];
+
+    for (const item of nameArr) {
+        newNameArr.push(item.replace(item[0], item[0].toUpperCase()));
+    }
+
+    const capitalisedName = newNameArr.join(' ');
+    return capitalisedName;
+}
+const fullName = 'celeste maricel fiori';
+console.log(capitalisator(fullName));
+// -> Celeste Maricel Fiori
+
+const maskCreditCardNumber = function (number) {
+    const str = String(number);
+    const newStr = str.slice(-4).padStart(str.length, '*');
+    return newStr;
+}
+
+console.log(maskCreditCardNumber(1111222233334444));
+// -> ************4444
