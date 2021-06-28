@@ -750,3 +750,16 @@ for (let [key1, infoLine] of flightsArr.entries()) {
 }
 flights = flightsArr.join('');
 console.log(flights);
+
+// Another solution
+
+flights = '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
+let flightsArr2 = flights.split('+');
+
+const getCode = str => str.slice(0, 3).toUpperCase();
+
+for (const iterator of flightsArr2) {
+    const [type, from, to, hour] = iterator.split(';')
+    let output = `${type.includes('Delayed') ? '🔴' : ''}${type.replace(/_/g, ' ')} from ${getCode(from)} to ${getCode(to)} (${hour.replace(':', 'h')})`.padStart(45);
+    console.log(output);
+}
