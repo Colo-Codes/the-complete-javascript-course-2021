@@ -207,3 +207,46 @@ console.log(swiss);
 
 book.call(swiss, ...flightData);
 // -> Marty McFly booked a seat on Swiss Air Line, flight LX123
+
+// Using 'bind' method
+
+const bookEW = book.bind(europeWings); // 'this' is bound to the 'europeWings' object
+const bookLH = book.bind(lufthansa);
+const bookLX = book.bind(swiss);
+
+bookEW(999, 'Dr. Emmet Brown');
+// -> Dr. Emmet Brown booked a seat on EuropeWings, flight EW999
+
+const bookEX777 = book.bind(europeWings, 777); // Both, the 'this' keyword and the first argument, are bound
+bookEX777('Han Solo');
+// -> Han Solo booked a seat on EuropeWings, flight EW777
+bookEX777('Chewbacca');
+// -> Chewbacca booked a seat on EuropeWings, flight EW777
+
+// Using event listeners
+
+lufthansa.planes = 300;
+lufthansa.buyPlane = function () {
+    console.log(this);
+    this.planes++;
+    console.log(this.planes);
+}
+
+document.querySelector('.buy').addEventListener('click', lufthansa.buyPlane.bind(lufthansa)); // We don't use 'call' because that method will return a value, and we actually need a function to use as callback.
+
+// Using bind to implement partial application (without setting the 'this' keyword)
+
+const addTax = (rate, value) => value + value * rate;
+
+console.log(addTax(0.1, 200));
+// -> 220
+
+const addTaxVAT = addTax.bind(null, .21); // As the function has no 'this' keyword, we bind the 'null' value in its place
+
+console.log(addTaxVAT(100));
+// -> 121
+
+// Challenge
+
+const addTaxVAT2 = rate => value => value + value * rate;
+console.log(addTaxVAT2(.21)(100));
