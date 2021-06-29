@@ -38,9 +38,9 @@ const checkIn = function (flightNum, passenger) {
     passenger.name = 'Mr. ' + damian.fullName; // Mutable: a modification in the copy of an object will have impact in the original object
 
     if (passenger.passport === 123456789) { // Passport number from external source
-        alert('Checked in!');
+        // alert('Checked in!');  // uncomment this
     } else {
-        alert('Wrong passport!');
+        // alert('Wrong passport!');  // uncomment this
     }
 };
 
@@ -90,7 +90,39 @@ Transformed by: oneWord
 */
 
 const high5 = function () {
-    alert('🖐');
+    // alert('🖐'); // uncomment this
 }
 
 document.body.addEventListener('click', high5); // The higher-order function (addEventListener) calls the event handler callback function (high5)
+
+// Higher-order returning a function
+
+const greet = function (greeting) {
+    return function (name) {
+        console.log(`${greeting} ${name}`);
+    }
+}
+
+const greetHey = greet("Hey");
+console.log(greetHey);
+/* ->
+ƒ (name) {
+    console.log(`${greeting} ${name}`);
+}
+*/
+greetHey('Damian');
+// -> Hey Damian
+greetHey('Celeste');
+// -> Hey Celeste
+
+greet('Hello')('John'); // Calling both functions in a sible statement
+// -> Hello John
+
+// Another example (using arrow functions)
+
+const myCombo = adjective => noun => console.log(`This is a ${adjective} ${noun}`);
+
+myCombo('green')('dog');
+// -> This is a green dog
+myCombo('beautiful')('code');
+// -> This is a beautiful code
