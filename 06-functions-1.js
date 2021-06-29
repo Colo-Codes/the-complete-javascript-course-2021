@@ -93,7 +93,7 @@ const high5 = function () {
     // alert('🖐'); // uncomment this
 }
 
-document.body.addEventListener('click', high5); // The higher-order function (addEventListener) calls the event handler callback function (high5)
+// document.body.addEventListener('click', high5); // Uncomment this // The higher-order function (addEventListener) calls the event handler callback function (high5)
 
 // Higher-order returning a function
 
@@ -126,3 +126,84 @@ myCombo('green')('dog');
 // -> This is a green dog
 myCombo('beautiful')('code');
 // -> This is a beautiful code
+
+// SECTION *** The call and apply methods ***
+
+const lufthansa = {
+    airline: 'Lufthansa',
+    iataCode: 'LH',
+    bookings: [],
+    book(flightNum, name) { // Enhanced Object Literals
+        console.log(`${name} booked a seat on ${this.airline}, flight ${this.iataCode}${flightNum}`);
+        this.bookings.push({ flight: `${this.iataCode}${flightNum}`, name });
+    }
+};
+
+lufthansa.book(123, 'Damian Demasi');
+// -> Damian Demasi booked a seat on Lufthansa, flight LH123
+lufthansa.book(456, 'John Doe');
+// -> John Doe booked a seat on Lufthansa, flight LH456
+
+const europeWings = {
+    airline: 'EuropeWings',
+    iataCode: 'EW',
+    bookings: []
+}
+
+const book = lufthansa.book;
+
+// We need to define where does the 'this' keyword points to:
+
+// Using 'call' method (the first argument is the object to which the 'this' keyword points to)
+
+book.call(europeWings, 32, 'Sarah Connor');
+// -> Sarah Connor booked a seat on EuropeWings, flight EW32
+console.log(europeWings);
+/* ->
+{
+  airline: 'EuropeWings',
+  iataCode: 'EW',
+  bookings: [ { flight: 'EW32', name: 'Sarah Connor' } ]
+}
+*/
+book.call(lufthansa, 123, 'T1000');
+// -> T1000 booked a seat on Lufthansa, flight LH123
+console.log(lufthansa);
+/* ->
+{
+  airline: 'Lufthansa',
+  iataCode: 'LH',
+  bookings: [
+    { flight: 'LH123', name: 'Damian Demasi' },
+    { flight: 'LH456', name: 'John Doe' },
+    { flight: 'LH123', name: 'T1000' }
+  ],
+  book: [Function: book]
+}
+*/
+
+// Using 'apply' method
+
+const swiss = {
+    airline: 'Swiss Air Line',
+    iataCode: 'LX',
+    bookings: []
+}
+
+const flightData = [123, 'Marty McFly']; // The 'apply' method uses an array as arguments
+
+book.apply(swiss, flightData);
+// -> Marty McFly booked a seat on Swiss Air Line, flight LX123
+console.log(swiss);
+/* ->
+{
+  airline: 'Swiss Air Line',
+  iataCode: 'LX',
+  bookings: [ { flight: 'LX123', name: 'Marty McFly' } ]
+}
+*/
+
+// Using 'call' method with an array
+
+book.call(swiss, ...flightData);
+// -> Marty McFly booked a seat on Swiss Air Line, flight LX123
