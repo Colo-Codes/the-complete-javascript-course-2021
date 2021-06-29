@@ -250,3 +250,11 @@ console.log(addTaxVAT(100));
 
 const addTaxVAT2 = rate => value => value + value * rate;
 console.log(addTaxVAT2(.21)(100));
+
+// SECTION *** Immediately Invoked Function Expressions (IIFE) ***
+
+(function () {
+    console.log('This will never run again!');
+})();
+
+(() => console.log('This will (also) never run again!'))();
