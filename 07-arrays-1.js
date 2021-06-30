@@ -245,3 +245,21 @@ USD: USD
 GBP: GBP
 EUR: EUR
 */
+
+// SECTION *** The map() method ***
+
+// const movements2 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+const eurToUsd = 1.1;
+
+// const movementsUSD = movements.map(function (mov) {
+//   return Math.trunc(mov * eurToUsd);
+// });
+
+const movementsUSD = movements.map(mov => Math.trunc(mov * eurToUsd));
+
+console.log(movements);
+console.log(movementsUSD);
+
+const movementsDescriptions = movements.map((mov, i) => `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(mov)}`);
+console.log(movementsDescriptions);
