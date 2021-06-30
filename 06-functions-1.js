@@ -258,3 +258,85 @@ console.log(addTaxVAT2(.21)(100));
 })();
 
 (() => console.log('This will (also) never run again!'))();
+
+// SECTION *** Closure ***
+
+const secureBooking = function () {
+    let passengerCount = 0;
+
+    return function () {
+        passengerCount++;
+        console.log(`${passengerCount} passengers`);
+    };
+};
+
+const booker = secureBooking();
+
+booker();
+// -> 1 passengers
+booker();
+// -> 2 passengers
+booker();
+// -> 3 passengers
+
+console.dir(booker); // Print the closure
+/* ->
+ƒ anonymous()
+    ...
+    [[Scopes]]: Scopes[3] // This is an internal property that we cannot access with our code
+    0: Closure (secureBooking) {passengerCount: 3}
+    1: Script {…}
+    2: Global {…}
+*/
+
+// Another example (1)
+
+let f;
+
+const g = function () {
+    const a = 20;
+    f = function () {
+        console.log(a * 2);
+    };
+};
+
+const h = function () {
+    const b = 100;
+    f = function () {
+        console.log(b * 2);
+    };
+};
+
+g();
+f();
+// -> 40
+console.dir(f);
+// -> Closure (g) {a: 20}
+
+h();
+f();
+// -> 200
+console.dir(f);
+// -> Closure (h) {b: 100}
+
+// Another example (2)
+
+const boardPassengers = function (n, wait) {
+    const PerGroup = n / 3;
+
+    setTimeout(function () {
+        console.log(`We are now boarding all ${n} passengers`);
+        console.log(`There are 3 groups, each with ${PerGroup} passengers`);
+    }, wait * 1000);
+
+    console.log(`Will start boarding in ${wait} seconds`);
+};
+
+const perGroup = 1000; // The function inside the setTimeout function is not using this variable, but the one in the closure.
+
+boardPassengers(180, 3);
+/* ->
+Will start boarding in 3 seconds
+We are now boarding all 180 passengers
+There are 3 groups, each with 60 passengers
+*/
