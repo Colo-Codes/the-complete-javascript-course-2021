@@ -79,6 +79,15 @@ const displayMovements = function (movements) {
 
 displayMovements(account1.movements);
 
+const createUsernames = function (accs) {
+  accs.forEach(acc => {
+    acc.username = acc.owner.toLowerCase().split(' ').map(name => name[0]).join('');
+    console.log(acc.username);
+  });
+};
+
+createUsernames(accounts);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -263,3 +272,15 @@ console.log(movementsUSD);
 
 const movementsDescriptions = movements.map((mov, i) => `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(mov)}`);
 console.log(movementsDescriptions);
+
+// Example
+
+const owner = 'Steven Thomas Williams';
+
+const username = owner.toLowerCase().split(' ').map(name => name[0]).join(''); // Using map()
+console.log(username);
+// -> stw
+
+const username2 = owner.toLowerCase().split(' ').reduce((total, name) => total + name[0], ''); // Using reduce()
+console.log(username2);
+// -> stw
