@@ -71,9 +71,11 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+
+// SECTION *** Array methods ***
 
 let arr = ['a', 'b', 'c', 'd', 'e'];
 
@@ -127,3 +129,72 @@ console.log(arr3.join('-'));
 // -> a-b-c-d-e
 console.log(arr3);
 // -> ["a", "b", "c", "d", "e"]
+
+// SECTION *** Array loops ***
+
+const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+console.log('--- For ---');
+for (let i = 0; i < movements.length; i++) {
+  if (movements[i] > 0) {
+    console.log(`Movement ${i + 1}: You deposited ${movements[i]}`);
+  }
+  else {
+    console.log(`Movement ${i + 1}: You withdrew ${Math.abs(movements[i])}`);
+  }
+};
+/* ->
+--- For ---
+Movement 1: You deposited 200
+Movement 2: You deposited 450
+Movement 3: You withdrew 400
+Movement 4: You deposited 3000
+Movement 5: You withdrew 650
+Movement 6: You withdrew 130
+Movement 7: You deposited 70
+Movement 8: You deposited 1300
+*/
+
+console.log('--- For...of ---');
+// for (const movement of movements) {
+for (const [i, movement] of movements.entries()) {
+  if (movement > 0) {
+    console.log(`Movement ${i + 1}: You deposited ${movement}`);
+  }
+  else {
+    console.log(`Movement ${i + 1}: You withdrew ${Math.abs(movement)}`);
+  }
+};
+/* ->
+--- For...of ---
+Movement 1: You deposited 200
+Movement 2: You deposited 450
+Movement 3: You withdrew 400
+Movement 4: You deposited 3000
+Movement 5: You withdrew 650
+Movement 6: You withdrew 130
+Movement 7: You deposited 70
+Movement 8: You deposited 1300
+*/
+
+console.log('--- forEach ---');
+movements.forEach((movement, i, arr) => { // function(item, index, array)
+  // (!) Break and continue statements do not work in the forEach() method.
+  if (movement > 0) {
+    console.log(`Movement ${i + 1}: You deposited ${movement}`);
+  }
+  else {
+    console.log(`Movement ${i + 1}: You withdrew ${Math.abs(movement)}`);
+  }
+});
+/* ->
+--- forEach ---
+Movement 1: You deposited 200
+Movement 2: You deposited 450
+Movement 3: You withdrew 400
+Movement 4: You deposited 3000
+Movement 5: You withdrew 650
+Movement 6: You withdrew 130
+Movement 7: You deposited 70
+Movement 8: You deposited 1300
+*/
