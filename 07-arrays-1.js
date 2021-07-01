@@ -69,7 +69,7 @@ const displayMovements = function (movements) {
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-      <div class="movements__value">${mov}</div>
+      <div class="movements__value">${mov}€</div>
     </div>
     `;
     // Add new elements to the movements container
@@ -86,6 +86,21 @@ const calcDisplayBalance = (movements) => {
 }
 
 calcDisplayBalance(account1.movements);
+
+const calcDisplaySummary = (movements) => {
+  const setSummary = (option) => movements.filter(mov => option === 'in' ? mov >= 0 : mov < 0).reduce((accum, mov) => accum + mov);
+
+  labelSumIn.textContent = `${setSummary('in')}€`;
+  labelSumOut.textContent = `${Math.abs(setSummary('out'))}€`;
+
+  // Interest paid on each deposit (if it's grater than 1€)
+  const interest = movements.filter(mov => mov >= 0).map(deposit => deposit * account1.interestRate / 100).filter(interest => interest >= 1).reduce((accum, deposit) => accum + deposit);
+
+  labelSumInterest.textContent = `${interest}€`;
+}
+
+calcDisplaySummary(account1.movements);
+
 
 const createUsernames = function (accs) {
   accs.forEach(acc => {
@@ -331,3 +346,23 @@ console.log(balance);
 const maximum = movements3.reduce((accum, curr) => accum < curr ? curr : accum);
 
 console.log(maximum);
+
+// SECTION *** Chaining methods ***
+
+console.log(movements);
+
+const totalDepositUDS = movements.filter(mov => mov >= 0).map(mov => mov * eurToUsd).reduce((accum, mov) => accum + mov);
+
+// If we want to know the array value that each method is producing (for debugging purposes)
+// const totalDepositUDS = movements.filter((mov, i, arr) => {
+//   console.log(arr);
+//   return mov >= 0
+// }).map((mov, i, arr) => {
+//   console.log(arr);
+//   return mov * eurToUsd
+// }).reduce((accum, mov, i, arr) => {
+//   console.log(arr);
+//   return accum + mov
+// });
+
+console.log(totalDepositUDS);
