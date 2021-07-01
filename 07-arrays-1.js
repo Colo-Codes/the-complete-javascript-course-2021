@@ -79,6 +79,14 @@ const displayMovements = function (movements) {
 
 displayMovements(account1.movements);
 
+const calcDisplayBalance = (movements) => {
+  const balance = movements.reduce((accum, mov) => accum + mov);
+  labelBalance.textContent = `${balance}€`;
+  return balance;
+}
+
+calcDisplayBalance(account1.movements);
+
 const createUsernames = function (accs) {
   accs.forEach(acc => {
     acc.username = acc.owner.toLowerCase().split(' ').map(name => name[0]).join('');
@@ -296,3 +304,30 @@ console.log(deposits);
 // -> [5000, 3400, 8500]
 console.log(withdrawals);
 // -> [-150, -790, -3210, -1000, -30]
+
+// SECTION *** The reduce() method ***
+
+const movements3 = [5000, 3400, -150, -790, -3210, -1000, 8500, -30];
+
+const balance = movements3.reduce((accumulator, current, i) => {
+  console.log(`Iteration ${i}: ${accumulator}`);
+  return accumulator + current;
+}); // No initial value -> first element used as initial value
+/* ->
+Iteration 1: 5000
+Iteration 2: 8400
+Iteration 3: 8250
+Iteration 4: 7460
+Iteration 5: 4250
+Iteration 6: 3250
+Iteration 7: 11750
+*/
+
+console.log(balance);
+// -> 11720
+
+// Maximum value
+
+const maximum = movements3.reduce((accum, curr) => accum < curr ? curr : accum);
+
+console.log(maximum);
