@@ -284,3 +284,15 @@ console.log(username);
 const username2 = owner.toLowerCase().split(' ').reduce((total, name) => total + name[0], ''); // Using reduce()
 console.log(username2);
 // -> stw
+
+// SECTION *** The filter() method ***
+
+const movements2 = [5000, 3400, -150, -790, -3210, -1000, 8500, -30];
+
+const deposits = movements2.filter(mov => mov >= 0);
+const withdrawals = movements2.filter(mov => mov < 0);
+
+console.log(deposits);
+// -> [5000, 3400, 8500]
+console.log(withdrawals);
+// -> [-150, -790, -3210, -1000, -30]
