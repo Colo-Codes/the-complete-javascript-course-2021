@@ -511,3 +511,19 @@ console.log(movements.includes(-130));
 const areAnyDeposits = movements.some(mov => mov > 0);
 console.log(areAnyDeposits);
 // -> true
+
+// *** every() ***
+
+console.log(movements.every(mov => mov > 0));
+// -> false
+console.log(account4.movements.every(mov => mov > 0));
+// -> true
+
+// SECTION *** Separate callback ***
+
+const deposit = mov => mov > 0;
+
+console.log('With separate callback: ', movements.every(deposit));
+// -> With separate callback:  false
+console.log('With separate callback: ', movements.some(deposit));
+// -> With separate callback:  true
