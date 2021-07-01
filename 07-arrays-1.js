@@ -366,3 +366,25 @@ const totalDepositUDS = movements.filter(mov => mov >= 0).map(mov => mov * eurTo
 // });
 
 console.log(totalDepositUDS);
+
+// SECTION *** The find() method ***
+
+const firstWithdrawal = movements.find(mov => mov < 0);
+
+console.log(firstWithdrawal);
+// -> -400
+
+// Use case: find an object inside an array
+
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+
+console.log(account);
+// -> {owner: "Jessica Davis", movements: Array(8), interestRate: 1.5, pin: 2222, username: "jd"}
+
+// Equivalent for...of
+for (const acc of accounts) {
+  if (acc.owner === 'Jessica Davis') {
+    console.log(acc);
+    break;
+  }
+}
