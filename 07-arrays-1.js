@@ -79,9 +79,10 @@ const displayMovements = function (movements) {
 
 // displayMovements(account1.movements);
 
-const calcDisplayBalance = (movements) => {
-  const balance = movements.reduce((accum, mov) => accum + mov);
-  labelBalance.textContent = `${balance}€`;
+const calcDisplayBalance = (acc) => {
+  acc.balance = acc.movements.reduce((accum, mov) => accum + mov);
+  labelBalance.textContent = `${acc.balance}€`;
+
   return balance;
 }
 
@@ -111,9 +112,20 @@ const createUsernames = function (accs) {
 
 createUsernames(accounts);
 
-// Event handlers
+const updateUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+  // Display balance
+  calcDisplayBalance(acc);
+  // Display summary
+  calcDisplaySummary(acc);
+};
+
+// SECTION *** Event handlers ***
 
 let currentAccount;
+
+// User login
 
 btnLogin.addEventListener('click', function (event) {
   // Prevent form from submitting
@@ -130,22 +142,42 @@ btnLogin.addEventListener('click', function (event) {
     inputLoginPin.blur();
     // Display UI and welcome message
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
-    // Display movements
-    displayMovements(currentAccount.movements);
-    // Display balance
-    calcDisplayBalance(currentAccount.movements);
-    // Display summary
-    calcDisplaySummary(currentAccount);
-    // Display everything
-    containerApp.style.opacity = 100;
 
+    // Update UI
+    updateUI(currentAccount);
+
+    containerApp.style.opacity = 100;
   }
   else {
     console.log('Wrong user or PIN');
   }
-
-
 });
+
+// Transfers
+
+btnTransfer.addEventListener('click', function (event) {
+  // Prevent form from submitting
+  event.preventDefault();
+
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
+  console.log(receiverAcc, amount);
+
+  if (amount > 0 && currentAccount.balance >= amount && receiverAcc && currentAccount.username !== receiverAcc?.username) {
+    // Transferring amounts
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+
+    updateUI(currentAccount);
+
+  }
+
+  // Clean transfer form
+  inputTransferAmount.value = inputTransferTo.value = '';
+  inputTransferAmount.blur();
+  inputTransferTo.blur();
+});
+
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
