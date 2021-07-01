@@ -178,6 +178,26 @@ btnTransfer.addEventListener('click', function (event) {
   inputTransferTo.blur();
 });
 
+// Loan
+
+btnLoan.addEventListener('click', function (event) {
+  // Prevent form from submitting
+  event.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // Add movement
+    currentAccount.movements.push(amount);
+
+    updateUI(currentAccount);
+  }
+
+  // Clean close form
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
+})
+
 // Close account
 
 btnClose.addEventListener('click', function (event) {
@@ -478,3 +498,16 @@ for (const acc of accounts) {
     break;
   }
 }
+
+// SECTION *** The some() and every() methods ***
+
+// *** some() ***
+
+// Checks for equality
+console.log(movements.includes(-130));
+// -> true
+
+// Checks for a condition
+const areAnyDeposits = movements.some(mov => mov > 0);
+console.log(areAnyDeposits);
+// -> true
