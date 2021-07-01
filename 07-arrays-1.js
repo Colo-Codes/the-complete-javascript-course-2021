@@ -77,7 +77,7 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
+// displayMovements(account1.movements);
 
 const calcDisplayBalance = (movements) => {
   const balance = movements.reduce((accum, mov) => accum + mov);
@@ -85,21 +85,21 @@ const calcDisplayBalance = (movements) => {
   return balance;
 }
 
-calcDisplayBalance(account1.movements);
+// calcDisplayBalance(account1.movements);
 
-const calcDisplaySummary = (movements) => {
-  const setSummary = (option) => movements.filter(mov => option === 'in' ? mov >= 0 : mov < 0).reduce((accum, mov) => accum + mov);
+const calcDisplaySummary = (currentAccount) => {
+  const setSummary = (option) => currentAccount.movements.filter(mov => option === 'in' ? mov >= 0 : mov < 0).reduce((accum, mov) => accum + mov);
 
   labelSumIn.textContent = `${setSummary('in')}€`;
   labelSumOut.textContent = `${Math.abs(setSummary('out'))}€`;
 
   // Interest paid on each deposit (if it's grater than 1€)
-  const interest = movements.filter(mov => mov >= 0).map(deposit => deposit * account1.interestRate / 100).filter(interest => interest >= 1).reduce((accum, deposit) => accum + deposit);
+  const interest = currentAccount.movements.filter(mov => mov >= 0).map(deposit => deposit * currentAccount.interestRate / 100).filter(interest => interest >= 1).reduce((accum, deposit) => accum + deposit);
 
   labelSumInterest.textContent = `${interest}€`;
 }
 
-calcDisplaySummary(account1.movements);
+// calcDisplaySummary(account1.movements);
 
 
 const createUsernames = function (accs) {
@@ -110,6 +110,42 @@ const createUsernames = function (accs) {
 };
 
 createUsernames(accounts);
+
+// Event handlers
+
+let currentAccount;
+
+btnLogin.addEventListener('click', function (event) {
+  // Prevent form from submitting
+  event.preventDefault();
+
+  currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value);
+  console.log(currentAccount);
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // Clean login form
+    inputLoginUsername.value = inputLoginPin.value = '';
+    // Remove focus on login form inputs
+    inputLoginUsername.blur();
+    inputLoginPin.blur();
+    // Display UI and welcome message
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
+    // Display movements
+    displayMovements(currentAccount.movements);
+    // Display balance
+    calcDisplayBalance(currentAccount.movements);
+    // Display summary
+    calcDisplaySummary(currentAccount);
+    // Display everything
+    containerApp.style.opacity = 100;
+
+  }
+  else {
+    console.log('Wrong user or PIN');
+  }
+
+
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
