@@ -178,6 +178,28 @@ btnTransfer.addEventListener('click', function (event) {
   inputTransferTo.blur();
 });
 
+// Close account
+
+btnClose.addEventListener('click', function (event) {
+  // Prevent form from submitting
+  event.preventDefault();
+
+  if (inputCloseUsername.value === currentAccount.username && Number(inputClosePin.value) === currentAccount.pin) {
+    // Delete account
+    const indexToDelete = accounts.findIndex(acc => acc.username === currentAccount.username);
+    accounts.splice(indexToDelete, 1);
+
+    // Hide UI
+    containerApp.style.opacity = 0;
+
+    console.log(accounts);
+  }
+
+  // Clean close form
+  inputCloseUsername.value = inputClosePin.value = '';
+  inputCloseUsername.blur();
+  inputClosePin.blur();
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
