@@ -671,3 +671,47 @@ labelBalance.addEventListener('click', function () {
   // for user 'js' -> [1300, 70, -130, -650, 3000, -400, 450, 200]
 
 })
+
+/// SECTION *** Array practice ***
+
+console.log('---- PRACTICE ----');
+
+// 1. How much was deposited in all accounts, in total?
+console.log(accounts.flatMap(acc => acc.movements).filter(mov => mov >= 0).reduce((accum, mov) => accum + mov));
+// -> 25180
+
+// 2. How many deposits in the bank with at least $1000?
+console.log(accounts.flatMap(acc => acc.movements).filter(mov => mov >= 1000).length);
+// -> 6
+let a = 10;
+// console.log(a++);
+// -> 10
+console.log(++a);
+// -> 11
+console.log(accounts.flatMap(acc => acc.movements).reduce((accum, mov) => mov >= 1000 ? ++accum : accum, 0));
+// -> 6
+
+// 3. Create an object with the sum of all the deposits and the sum of all the withdrawals
+console.log(accounts.flatMap(acc => acc.movements).reduce((accum, mov) => {
+  // mov > 0 ? accum.deposits += mov : accum.withdrawals += mov;
+  accum[mov > 0 ? 'deposits' : 'withdrawals'] += mov;
+  return accum; // The callback function in the 'reduce' method should always return the accumulator (in most arrow functions this is implicit).
+}, { deposits: 0, withdrawals: 0 }));
+// -> {deposits: 25180, withdrawals: -7340}
+
+// 4. Convert a given string to Title Case
+// this is a nice title -> This Is a Nice Title
+const toTitleCase = str => {
+  // const capitalise = str => str[0].toUpperCase + str.slice(1);
+  const capitalise = str => str.replace(str[0], str[0].toUpperCase());
+  const exceptions = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with'];
+  const strTitleCased = str.toLowerCase().split(' ').map(word => !exceptions.includes(word) ? capitalise(word) : word).join(' ');
+  return capitalise(strTitleCased);
+}
+
+console.log(toTitleCase('this is a nice title'));
+// -> This Is a Nice Title
+console.log(toTitleCase('I wroTe ThiS OTHER title with a bigger length, On aN amazing BUT short phrase...'));
+// -> I Wrote This Other Title with a Bigger Length, on an Amazing but Short Phrase...
+console.log(toTitleCase('AND this is another one.'));
+// -> And This Is Another One.
