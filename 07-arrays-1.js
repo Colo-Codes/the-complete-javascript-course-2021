@@ -622,3 +622,52 @@ console.log(movements.sort((a, b) => a - b));
 
 console.log(movements.sort((a, b) => b - a));
 // -> [3000, 1300, 450, 200, 70, -130, -400, -650]
+
+// SECTION *** More ways of creating and filling arrays ***
+
+console.log([1, 2, 3, 4, 5, 6, 7]);
+// -> [1, 2, 3, 4, 5, 6, 7]
+console.log(new Array(1, 2, 3, 4, 5, 6, 7));
+// -> [1, 2, 3, 4, 5, 6, 7]
+
+// Empty array
+
+const myArr_2 = new Array(7);
+console.log(myArr_2);
+// -> [empty × 7]
+
+// fill() method
+
+myArr_2.fill(1);
+console.log(myArr_2);
+// -> [1, 1, 1, 1, 1, 1, 1]
+
+myArr_2.fill(2, 1, 6);
+console.log(myArr_2);
+// -> [1, 2, 2, 2, 2, 2, 1]
+
+myArr_2.fill(3, 4);
+console.log(myArr_2);
+// -> [1, 2, 2, 2, 3, 3, 3]
+
+// Array.from()
+
+const myArr_3 = Array.from({ length: 7 }, () => 5);
+console.log(myArr_3);
+// -> [5, 5, 5, 5, 5, 5, 5]
+
+const myArr_4 = Array.from({ length: 7 }, (current, i) => i + 1);
+console.log(myArr_4);
+// -> [1, 2, 3, 4, 5, 6, 7]
+
+labelBalance.addEventListener('click', function () {
+  // const movementsUI = Array.from(document.querySelectorAll('.movements__value')).map(element => Number(element.textContent.replace('€', '')));
+  const movementsUI = Array.from(document.querySelectorAll('.movements__value'), element => Number(element.textContent.replace('€', '')));
+  console.log(movementsUI);
+  // for user 'js' -> [1300, 70, -130, -650, 3000, -400, 450, 200]
+
+  const movementsUI2 = [...document.querySelectorAll('.movements__value')].map(element => Number(element.textContent.replace('€', '')));
+  console.log(movementsUI2);
+  // for user 'js' -> [1300, 70, -130, -650, 3000, -400, 450, 200]
+
+})
