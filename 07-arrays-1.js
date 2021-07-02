@@ -61,10 +61,13 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   // Clean the content of the movements container
   containerMovements.innerHTML = '';
-  movements.forEach((mov, i) => {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements; // We use the slice() to create a copy of the array so the original one is not mutated
+
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
     <div class="movements__row">
@@ -219,6 +222,17 @@ btnClose.addEventListener('click', function (event) {
   inputCloseUsername.value = inputClosePin.value = '';
   inputCloseUsername.blur();
   inputClosePin.blur();
+});
+
+// Sort movements
+
+let sortedState = false;
+
+btnSort.addEventListener('click', function (event) {
+  event.preventDefault();
+
+  displayMovements(currentAccount.movements, !sortedState);
+  sortedState = !sortedState;
 });
 
 /////////////////////////////////////////////////
@@ -576,3 +590,35 @@ console.log(overallBalance2);
 const overallBalance3 = accounts.flatMap(acc => acc.movements).reduce((balance, mov) => balance + mov);
 console.log(overallBalance3);
 // -> 17840
+
+// SECTION *** Sort arrays ***
+
+// sort() (!) WARNING: it mutates the original array
+
+const myArr_1 = ['a', 'B', 'A', 'x', 'Y', 'z', 0, 543, 9, -1, -50, -1000];
+console.log(myArr_1.sort());
+// -> [-1, -1000, -50, 0, 543, 9, "A", "B", "Y", "a", "x", "z"] // It sorts the array as its items were strings.
+console.log(myArr_1);
+// -> [-1, -1000, -50, 0, 543, 9, "A", "B", "Y", "a", "x", "z"]
+
+console.log(movements);
+// -> [200, 450, -400, 3000, -650, -130, 70, 1300]
+// console.log(movements.sort());
+// -> [-130, -400, -650, 1300, 200, 3000, 450, 70]
+
+// Compare A and B: returning a <= 0 means sort() should keep order: A, B
+// Compare A and B: returning a > 0 means sort() should switch order: B, A
+console.log(movements.sort((a, b) => {
+  if (a > b)
+    return 1;
+  if (b > a)
+    return -1;
+}));
+// -> [-650, -400, -130, 70, 200, 450, 1300, 3000]
+
+// Is the same as:
+console.log(movements.sort((a, b) => a - b));
+// -> [-650, -400, -130, 70, 200, 450, 1300, 3000]
+
+console.log(movements.sort((a, b) => b - a));
+// -> [3000, 1300, 450, 200, 70, -130, -400, -650]
