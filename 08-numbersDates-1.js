@@ -81,18 +81,25 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort ? acc.movements.slice().sort((a, b) => a - b) : acc.movements;
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const date = new Date(acc.movementsDates[i]);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+    const displayDate = `${day}/${month}/${year}`
 
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${i + 1
       } ${type}</div>
+        <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
@@ -141,7 +148,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // Display balance
   calcDisplayBalance(acc);
@@ -153,6 +160,12 @@ const updateUI = function (acc) {
 ///////////////////////////////////////
 // Event handlers
 let currentAccount;
+
+// FIXME Fake always logged in
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
+// FIXME Fake always logged in
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -168,6 +181,10 @@ btnLogin.addEventListener('click', function (e) {
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]
       }`;
     containerApp.style.opacity = 100;
+
+    // Current date
+    const now = new Date();
+    labelDate.textContent = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, 0)}/${now.getFullYear()}, ${String(now.getHours()).padStart(2, 0)}:${String(now.getMinutes()).padStart(2, 0)}`; // day/month/year, hour:minutes
 
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -196,6 +213,11 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    // Add transfer date
+    const transferDate = new Date();
+    currentAccount.movementsDates.push(transferDate.toISOString());
+    receiverAcc.movementsDates.push(transferDate.toISOString());
+
     // Update UI
     updateUI(currentAccount);
   }
@@ -209,6 +231,10 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+
+    // Add transfer date
+    const transferDate = new Date();
+    currentAccount.movementsDates.push(transferDate.toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -242,7 +268,7 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
@@ -392,3 +418,77 @@ console.log(isEven(8));
 // -> true
 console.log(isEven(9));
 // -> false
+
+// SECTION *** Dates and time ***
+
+// Create date
+
+const now2 = new Date();
+console.log(now2);
+// -> Mon Jul 05 2021 11:13:33 GMT+0930 (Australian Central Standard Time)
+
+console.log(new Date('Jul 11 2021 11:11:11'));
+// -> Sun Jul 11 2021 11:11:11 GMT+0930 (Australian Central Standard Time)
+console.log(new Date(account1.movementsDates[0])); // '2019-11-18T21:31:17.178Z'
+// -> Tue Nov 19 2019 08:01:17 GMT+1030 (Australian Central Daylight Time)
+console.log(new Date(2022, 0, 24, 4, 30, 59));
+// -> Mon Jan 24 2022 04:30:59 GMT+1030 (Australian Central Daylight Time)
+console.log(new Date(2022, 0, 32)); // Auto-correction 
+// -> Tue Feb 01 2022 00:00:00 GMT+1030 (Australian Central Daylight Time)
+
+console.log(new Date(0));
+// -> Thu Jan 01 1970 09:30:00 GMT+0930 (Australian Central Standard Time)
+console.log(new Date(3 * 24 * 60 * 60 * 1000)); // 3 days -> 3 * 24 * 60 * 60 * 1000 = 259200000 (timestamp)
+// -> Sun Jan 04 1970 09:30:00 GMT+0930 (Australian Central Standard Time)
+console.log(new Date(1625450173000)); // Epoch * 1000 milliseconds
+// -> Mon Jul 05 2021 11:26:13 GMT+0930 (Australian Central Standard Time)
+
+console.log('--- ---');
+
+// Working with dates
+
+// Get date methods
+const future = new Date(2023, 11, 30, 12, 12);
+console.log(future);
+//-> Sat Dec 30 2023 12:12:00 GMT+1030 (Australian Central Daylight Time)
+console.log(future.getFullYear()); // Don't use getYear()
+// -> 2023
+console.log(future.getYear()); // Do not use this one
+// -> 123 (2023 = 1900 + 123)
+console.log(future.getMonth()); // Zero based
+// -> 11 (December, because it's zero based)
+console.log(future.getDate()); // Day of month
+// -> 30
+console.log(future.getDay()); // Day of week (zero based)
+// -> 6 (Saturday)
+console.log(future.getHours());
+// -> 12
+console.log(future.getMinutes());
+// -> 12
+console.log(future.getSeconds());
+// -> 0
+console.log(future.toISOString());
+// -> 2023-12-30T01:42:00.000Z
+console.log(future.toDateString());
+// -> Sat Dec 30 2023
+console.log(future.toLocaleDateString());
+// -> 30/12/2023
+console.log(future.toLocaleString());
+// -> 30/12/2023, 12:12:00
+console.log(future.toLocaleTimeString());
+// -> 12:12:00
+
+// Get timestamp
+console.log(future.getTime()); // Timestamp (Epoch * 1000 milliseconds)
+// -> 1703900520000
+console.log(Date.now()); // Timestamp (Epoch * 1000 milliseconds)
+// -> 1625451005656
+
+// Set date methods (one for each of the above)
+console.log(future.setFullYear(2039));
+// -> 2208822120000
+console.log(future);
+// -> Fri Dec 30 2039 12:12:00 GMT+1030 (Australian Central Daylight Time)
+
+console.log('--- ---');
+
