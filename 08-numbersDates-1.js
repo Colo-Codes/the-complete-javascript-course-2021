@@ -91,10 +91,9 @@ const displayMovements = function (movements, sort = false) {
 
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${
-      i + 1
-    } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__type movements__type--${type}">${i + 1
+      } ${type}</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,19 +103,19 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +125,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -166,9 +165,8 @@ btnLogin.addEventListener('click', function (e) {
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     // Display UI and message
-    labelWelcome.textContent = `Welcome back, ${
-      currentAccount.owner.split(' ')[0]
-    }`;
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]
+      }`;
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -206,7 +204,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -251,3 +249,146 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// SECTION *** Numbers ***
+
+console.log(23 === 23.0);
+// -> true (JavaScript numbers are always stored as double precision floating point numbers)
+
+console.log(0.1 + 0.2);
+// -> 0.30000000000000004 (due to binary number representation rounding errors)
+
+// Converting strings to numbers
+
+console.log(Number('49'));
+// -> 49
+
+console.log(+'49');
+// -> 49
+
+// Parsing a string to number
+
+console.log(Number.parseInt('30px', 10));
+// -> 30
+
+console.log(Number.parseInt('ee30', 10));
+// -> NaN
+
+console.log(Number.parseFloat('2.5rem'));
+// -> 2.5
+
+console.log(Number.parseInt('2.5rem'));
+// -> 2
+
+// Check for NaN and numbers
+
+console.log(Number.isNaN(20));
+// -> false
+console.log(Number.isNaN('20'));
+// -> false (it is just a value)
+console.log(Number.isNaN(+'20x'));
+// -> true
+console.log(Number.isNaN(10 / 0));
+// -> false (infinity) (this could be a problem, so we should use the Number.isFinite() method instead)
+
+console.log(Number.isFinite(20));
+// -> true
+console.log(Number.isFinite('20'));
+// -> false (it is just a value)
+console.log(Number.isFinite(+'20x'));
+// -> false
+console.log(Number.isFinite(10 / 0));
+// -> false
+
+console.log(Number.isInteger(39));
+// -> true
+console.log(Number.isInteger(39.0));
+// -> true
+console.log(Number.isInteger('39'));
+// -> false
+console.log(Number.isInteger(39.99));
+// -> false
+
+// Mathematical operations (other than +, -, *, /, **)
+
+console.log(Math.sqrt(25));
+// -> 5
+console.log(25 ** (1 / 2));
+// -> 5
+console.log(25 ** (1 / 3));
+// -> 2.924017738212866
+console.log(8 ** (1 / 3));
+// -> 2
+
+console.log(Math.max(3, 5, 9, 10, 39, 5));
+// -> 39
+console.log(Math.max(3, 5, 9, '10', 39, 5));
+// -> 39
+console.log(Math.max(3, 5, 9, '10px', 39, 5));
+// -> NaN
+
+console.log(Math.min(3, 5, 9, 10, 39, 5));
+// -> 3
+
+console.log(Math.PI);
+// -> 3.141592653589793
+
+// Random numbers
+
+console.log(Math.random());
+// -> 0.002104932715161212 (between 0 and 1 (not inclusive))
+
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min) + 1) + min;
+console.log(randomInt(10, 20));
+// -> 19 (between 10 and 20 inclusive)
+
+// Rounding integers
+
+console.log(Math.trunc(39.99));
+// -> 39
+
+console.log(Math.round(39.99));
+// -> 40
+console.log(Math.round(39.11));
+// -> 39
+
+console.log(Math.ceil(39.99));
+// -> 40
+console.log(Math.ceil(39.11));
+// -> 40
+
+console.log(Math.floor(39.99));
+// -> 39
+console.log(Math.floor(39.11));
+// -> 39
+
+console.log(Math.trunc(-39.99));
+// -> -39
+console.log(Math.floor(-39.99)); // This one is better
+// -> -40
+
+// Rounding decimals (floats)
+
+console.log((2.7).toFixed(0));
+// -> 3 (string)
+console.log((2.7).toFixed(3));
+// -> 2.700 (string)
+console.log((2.345).toFixed(2));
+// -> 2.35 (string)
+console.log(+(2.345).toFixed(2));
+// -> 2.35 (number)
+console.log(Number((2.345).toFixed(2)));
+// -> 2.35 (number)
+
+// Reminder operator
+
+console.log(5 % 2);
+// -> 1 (5 = 2 * 2 + 1)
+console.log(5 / 2);
+// -> 2.5
+
+const isEven = n => n % 2 === 0;
+console.log(isEven(8));
+// -> true
+console.log(isEven(9));
+// -> false
