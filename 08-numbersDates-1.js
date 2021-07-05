@@ -519,3 +519,26 @@ console.log(calcDaysPassed(new Date(2023, 10, 30), new Date(2023, 11, 2)));
 // -> 2
 console.log(calcDaysPassed(new Date(2023, 10, 30), new Date(2023, 11, 2, 10, 30)));
 // -> 2.4375
+
+// SECTION *** Date API (Intl) ***
+
+const now3 = new Date();
+const options = { // Mon, 5 July 2021, 01:38 pm
+  hour: '2-digit',
+  minute: '2-digit',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  weekday: 'short',
+}
+// Manual definition
+labelDate.textContent = new Intl.DateTimeFormat('es-AR', options).format(now3); // http://www.lingoes.net/en/translator/langcode.htm
+// -> lun, 5 de julio de 2021 13:42
+
+// Definition from user's browser
+const locale = navigator.language;
+console.log(locale);
+// -> en-AU
+labelDate.textContent = new Intl.DateTimeFormat(locale, options).format(now3);
+// -> Mon, 5 July 2021, 01:42 pm
+
