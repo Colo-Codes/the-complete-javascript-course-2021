@@ -105,7 +105,7 @@ console.log(message);
 
 // prepend(), append(), before(), after()
 const header = document.querySelector('header'); // Element
-header.prepend(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+// header.prepend(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <header class="header">
   <div class="cookie-message"> ... </div>
@@ -119,7 +119,7 @@ header.append(message); // (!) IMPORTANT: Inserts or moves (if it already exists
   <div class="cookie-message"> ... </div>
   </header>
 */
-header.append(message.cloneNode(true)); // Creates a copy of the element and inserts it into the DOM
+// header.append(message.cloneNode(true)); // Creates a copy of the element and inserts it into the DOM
 /*
 <header class="header">
   ...
@@ -127,14 +127,14 @@ header.append(message.cloneNode(true)); // Creates a copy of the element and ins
   <div class="cookie-message"> ... </div>
   </header>
 */
-header.before(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+// header.before(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <div class="cookie-message"> ... </div>
 <header class="header">
   ...
   </header>
 */
-header.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+// header.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <header class="header">
 ...
@@ -145,3 +145,68 @@ header.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists)
 // insertAdjacentElement()
 console.log(document.getElementById('section--1').insertAdjacentElement('afterend', document.createElement('div')));
 // -> <div></div> (after the element with id == 'section--1')
+
+// SECTION *** Deleting elements ***
+
+document.querySelector('.btn--close-cookie').addEventListener('click', function () {
+  // message.parentElement.removeChild(message); // pre-ES6
+  message.remove();
+});
+
+// SECTION *** Styles ***
+
+// Set a style
+message.style.backgroundColor = '#37383d'
+message.style.width = '120%';
+
+// Get a style.
+console.log(message.style.color); // We can not get styles this way, other than the (inline) styles we have already set with message.style.<style>
+// -> (empty)
+console.log(message.style.backgroundColor);
+// -> rgb(55, 56, 61)
+console.log(getComputedStyle(message).color);
+// -> rgb(187, 187, 187)
+message.style.height = `${Number.parseFloat(getComputedStyle(message).height) + 30}px`;
+// The hight gets modified
+
+// Changing custom style properties (also valid for any other property)
+// document.documentElement.style.setProperty('--color-primary', 'orangered');
+
+// SECTION *** Attributes ***
+
+// Get attributes
+const logo = document.querySelector('.nav__logo');
+console.log(logo.alt);
+// -> Bankist logo
+console.log(logo.className);
+// -> nav__logo
+console.log(logo.src); // (!) IMPORTANT This will show the full URL
+// -> http://127.0.0.1:8080/assets/img/logo.png (computed; absolute)
+console.log(logo.getAttribute('src')); // (!) IMPORTANT This will show the actual value (relative path)
+// -> ./assets/img/logo.png
+
+// Get attributes that are not standard (such as the made up 'designer' attribute)
+console.log(logo.designer);
+// -> undefined
+console.log(logo.getAttribute('designer'));
+// -> Jonas
+
+// Set attributes
+logo.alt = "Small image with company name";
+logo.setAttribute('company', 'Bankist');
+// -> <img src="./assets/img/logo.png" alt="Small image with company name" class="nav__logo" id="logo" designer="Jonas" company="Bankist">
+
+// Data attributes
+console.log(logo.dataset.versionNumber);
+// -> 3.0 (In HTML: <img ... id = "logo" designer = "Jonas" data-version-number="3.0"/>)
+
+// SECTION *** Classes ***
+
+logo.classList.add('class_name');
+logo.classList.remove('class_name');
+logo.classList.toggle('class_name');
+logo.classList.contains('class_name');
+
+// Don't use this, because it will override all the classes that are already present
+logo.className = 'I_will_override_all';
+
