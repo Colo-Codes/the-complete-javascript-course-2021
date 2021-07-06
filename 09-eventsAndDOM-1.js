@@ -86,3 +86,62 @@ section--1: section#section--1.section,
 section--2: section#section--2.section,
 section--3: section#section--3.section ]
 */
+
+// SECTION *** Creating and inserting elements ***
+
+// createElement()
+const message = document.createElement('div'); // This is a DOM object (a node)
+console.log(message);
+// -> div (node) and <div></div>
+message.classList.add('cookie-message');
+console.log(message);
+// -> div.cookie-message (node) and <div class="cookie-message"></div>
+message.textContent = 'We use cookies for improved functionality and analytics.';
+console.log(message);
+// -> div.cookie-message (node) and <div class="cookie-message">We use cookies for improved functionality and analytics.</div>
+message.innerHTML = 'We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>';
+console.log(message);
+// -> div.cookie-message (node) and <div class="cookie-message">We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button></div>
+
+// prepend(), append(), before(), after()
+const header = document.querySelector('header'); // Element
+header.prepend(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+/*
+<header class="header">
+  <div class="cookie-message"> ... </div>
+  ...
+  </header>
+*/
+header.append(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+/*
+<header class="header">
+  ...
+  <div class="cookie-message"> ... </div>
+  </header>
+*/
+header.append(message.cloneNode(true)); // Creates a copy of the element and inserts it into the DOM
+/*
+<header class="header">
+  ...
+  <div class="cookie-message"> ... </div>
+  <div class="cookie-message"> ... </div>
+  </header>
+*/
+header.before(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+/*
+<div class="cookie-message"> ... </div>
+<header class="header">
+  ...
+  </header>
+*/
+header.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+/*
+<header class="header">
+...
+</header>
+<div class="cookie-message"> ... </div>
+*/
+
+// insertAdjacentElement()
+console.log(document.getElementById('section--1').insertAdjacentElement('afterend', document.createElement('div')));
+// -> <div></div> (after the element with id == 'section--1')
