@@ -184,15 +184,36 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = function () {
+  let time = 60;
+
+  const tick = () => {
+    const min = String(Math.floor(time / 60)).padStart(2, '0');
+    const sec = `${time % 60}`.padStart(2, '0');
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // Log out the user when timer reaches 0
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = `Log in to get started`;
+      containerApp.style.opacity = 0;
+    }
+
+    time--;
+  }
+
+  // Call the function immediately
+  tick();
+
+  // Call the function every second
+  const timer = setInterval(tick, 1000); // every 1 second
+
+  return timer
+};
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
-
-// FIXME Fake always logged in
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
-// FIXME Fake always logged in
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -228,8 +249,15 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
 
+    // LogOut timer
+    if (timer) {
+      clearInterval(timer); // Clear the timer of a previous login
+    }
+    timer = startLogOutTimer();
+
     // Update UI
     updateUI(currentAccount);
+
   }
 });
 
@@ -258,6 +286,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    // Reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -267,15 +299,22 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    // Simulate daly on loan approval
+    setTimeout(() => {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add transfer date
-    const transferDate = new Date();
-    currentAccount.movementsDates.push(transferDate.toISOString());
+      // Add transfer date
+      const transferDate = new Date();
+      currentAccount.movementsDates.push(transferDate.toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+    }, 5000); // 5 seconds
+
+    // Reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
   inputLoanAmount.value = '';
 });
@@ -587,4 +626,31 @@ console.log('Germany:   ', new Intl.NumberFormat('de-DE', options2).format(num))
 console.log('Australia: ', new Intl.NumberFormat('en-AU', options2).format(num));
 // -> Australia:  $1,234,567.89
 
+// SECTION *** Timers ***
 
+// setTimeout
+
+console.log('Before the setTimeout()');
+setTimeout((ing1, ing2) => console.log(`Here is your first pizza 🍕 with ${ing1} and ${ing2}`), 5000, 'olives', 'onions');
+console.log('After the setTimeout()'); // setTimeout does not block the execution of code
+
+// Cancel a setTimeout
+
+const ingredients = ['olives', 'onions'];
+const deliverPizza = setTimeout((ing1, ing2) => console.log(`Here is your NEW pizza 🍕 with ${ing1} and ${ing2}`), 5000, ...ingredients);
+
+if (ingredients.includes('olives')) {
+  clearTimeout(deliverPizza); // Cancelling the setTimeout
+}
+
+// SetInterval
+
+setInterval(function () {
+  console.log(new Date().toLocaleTimeString());
+}, 1000); // This function will be called every second
+/* ->
+09:07:54
+09:07:55
+09:07:56
+...
+*/
