@@ -69,6 +69,32 @@ document.querySelector('.nav__links').addEventListener('click', function (e) { /
   }
 });
 
+///////////////////////////////////////
+// Tabbed component
+
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+// Avoiding creating an event listener for each of the tab buttons by using event delegation
+tabsContainer.addEventListener('click', function (event) {
+  // Matching strategy
+  const clicked = event.target.closest('.operations__tab');
+
+  // Guard clause
+  if (!clicked) return;
+
+  // Remove active classes
+  tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  // Active tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate content area
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
+});
+
 /////////////////////////////////////////////////////////
 // SECTION *** Selecting elements ***
 
@@ -414,6 +440,8 @@ console.log(myH1.nextElementSibling);
 console.log(myH1.parentElement.children);
 // -> HTMLCollection(4) [h1, h4, button.btn--text.btn--scroll-to, img.header__img]
 
-[...myH1.parentElement.children].forEach(function (el) {
-  if (el !== myH1) el.style.transform = 'scale(0.5)';
-});
+// [...myH1.parentElement.children].forEach(function (el) {
+//   if (el !== myH1) el.style.transform = 'scale(0.5)';
+// });
+
+// SECTION *** ***
