@@ -289,3 +289,48 @@ setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
 // Adding event listeners to HTML (do not do this, use it just as a reference)
 
 // <h1 onclick="alert('Clicked on HTML h1')">
+
+// SECTION *** Event propagation: bubbling and capturing ***
+
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min) + 1 + min);
+
+const randomColor = () => `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+console.log(randomColor);
+
+document.querySelector('.nav__link').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINK', e.target, e.currentTarget);
+  // -> <a class="nav__link" href="#" style="background-color: rgb(228, 238, 113);">Features</a>
+  // -> <a class="nav__link" href="#" style="background-color: rgb(228, 238, 113);">Features</a>
+  console.log(this === e.currentTarget);
+  // -> true
+
+  // Stop event propagation
+  // e.stopPropagation();
+});
+
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINKS', e.target, e.currentTarget);
+  // -> <a class="nav__link" href="#" style="background-color: rgb(228, 238, 113);">Features</a>
+  // -> <ul class="nav__links" style="background-color: rgb(28, 135, 232);">...</ul >
+  console.log(this === e.currentTarget);
+  // -> true
+});
+
+document.querySelector('.nav').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('NAV', e.target, e.currentTarget);
+  // -> <a class="nav__link" href="#" style="background-color: rgb(228, 238, 113);">Features</a>
+  // -> <nav class="nav" style="background-color: rgb(191, 69, 49);">...</nav>
+  console.log(this === e.currentTarget);
+  // -> true
+
+  // The 'target' is where the event happens; not where the event listener is attached to.
+  // The 'currentTarget' is the current event in the capturing/bubbling step.
+
+  /*
+  If we want to listen for an event in the capture phase, we have to set the third argument of the addEventListener method to true:
+  - element`.addEventListener('click', function(){...}, **true**)`
+  */
+}, false);
