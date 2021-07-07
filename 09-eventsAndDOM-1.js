@@ -233,11 +233,59 @@ btnScrollTo.addEventListener('click', function (e) {
 
   // ES5
   // window.scrollTo(s1Coordinates.left + window.pageXOffset, s1Coordinates.top + window.pageYOffset);
-  window.scrollTo({
-    left: s1Coordinates.left + window.pageXOffset,
-    top: s1Coordinates.top + window.pageYOffset,
-    behavior: 'smooth'
-  });
+  // window.scrollTo({
+  //   left: s1Coordinates.left + window.pageXOffset,
+  //   top: s1Coordinates.top + window.pageYOffset,
+  //   behavior: 'smooth'
+  // });
   // ES6
-  // section1.scrollIntoView({behavior: 'smooth'});
+  section1.scrollIntoView({ behavior: 'smooth' });
 });
+
+// SECTION *** Types of events and event handlers ***
+
+// Add and remove event listeners
+
+// Add event listeners
+
+// Advantages of addEventListener over the 'on'events:
+// - It allows to define multiple listeners/handlers on the same Element, and all of them will work. If we do the same with the 'on'events, the only valid one will be the last one.
+// - We can remove an event listener/handler if we don't need it any more.
+
+const h1 = document.querySelector('h1');
+/*
+
+h1.addEventListener('mouseenter', function () {
+  console.log('addEventListener: reading h1!!');
+});
+
+h1.onmouseenter = function () {
+  console.log('onmouseenter: reading h1!!');
+};
+*/
+
+// Listen for an event once (create and remove an event)
+
+/*
+const alertH1 = function (e) {
+  console.log('addEventListener: reading h1!!');
+
+  h1.removeEventListener('mouseenter', alertH1);
+};
+
+h1.addEventListener('mouseenter', alertH1);
+*/
+
+// Remove event after certain time has passed
+
+const alertH1 = function (e) {
+  console.log('addEventListener: reading h1!!');
+};
+
+h1.addEventListener('mouseenter', alertH1);
+
+setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
+
+// Adding event listeners to HTML (do not do this, use it just as a reference)
+
+// <h1 onclick="alert('Clicked on HTML h1')">
