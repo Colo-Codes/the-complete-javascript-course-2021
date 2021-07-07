@@ -378,3 +378,42 @@ document.querySelector('.nav').addEventListener('click', function (e) {
 
 // lines 45 - 71
 
+// SECTION *** DOM traversing ***
+
+const myH1 = document.querySelector('h1');
+// <h1>When <span class="highlight">banking</span>meets <br/> <span class="highlight">minimalist</span> </h1>
+
+// Going down (children)
+
+console.log(myH1.querySelectorAll('.highlight')); // It will select the child elements no matter how deep they are
+// -> NodeList(2) [span.highlight, span.highlight]
+console.log(myH1.childNodes); // Only direct children
+// -> NodeList(9) [text, comment, text, span.highlight, text, br, text, span.highlight, text]...
+console.log(myH1.children); // Only direct children. A live collection (updated on the fly)
+// -> HTMLCollection(3) [span.highlight, br, span.highlight]...
+console.log(myH1.firstElementChild);
+// -> <span class="highlight">banking</span>
+console.log(myH1.lastElementChild);
+// -> <span class="highlight">minimalist</span>
+
+// Going up (parents)
+
+console.log(myH1.parentNode); // Direct parent
+// -> <div class="header__title">...</div>
+console.log(myH1.parentElement); // Direct parent
+// -> <div class="header__title">...</div>
+console.log(myH1.closest('.header'));
+// -> <header class="header">...</header>
+
+// Going sideways (siblings)
+
+console.log(myH1.previousElementSibling);
+// -> null
+console.log(myH1.nextElementSibling);
+// -> <h4>A simpler banking experience for a simpler life.</h4>
+console.log(myH1.parentElement.children);
+// -> HTMLCollection(4) [h1, h4, button.btn--text.btn--scroll-to, img.header__img]
+
+[...myH1.parentElement.children].forEach(function (el) {
+  if (el !== myH1) el.style.transform = 'scale(0.5)';
+});
