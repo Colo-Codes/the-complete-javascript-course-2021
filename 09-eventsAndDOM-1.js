@@ -210,3 +210,34 @@ logo.classList.contains('class_name');
 // Don't use this, because it will override all the classes that are already present
 logo.className = 'I_will_override_all';
 
+// SECTION *** Getting information about viewport scrolling and position ***
+
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+btnScrollTo.addEventListener('click', function (e) {
+  const s1Coordinates = section1.getBoundingClientRect();
+  console.log(s1Coordinates);
+  // -> DOMRect {x: 0, y: 1346.666748046875, width: 1118.666748046875, height: 1395.666748046875, top: 1346.666748046875, …}
+
+  console.log(e.target.getBoundingClientRect());
+  // -> DOMRect {x: 30, y: 760.9791870117188, width: 112.45833587646484, height: 27.33333396911621, top: 760.9791870117188, …}
+
+  console.log('Current scroll X/Y:', window.pageXOffset, window.pageYOffset);
+  // -> Current scroll X/Y: 0 744
+
+  console.log('Viewport height/width', document.documentElement.clientHeight, document.documentElement.clientWidth);
+  // -> Viewport height/width 1327 1119
+
+  // Smooth scrolling
+
+  // ES5
+  // window.scrollTo(s1Coordinates.left + window.pageXOffset, s1Coordinates.top + window.pageYOffset);
+  window.scrollTo({
+    left: s1Coordinates.left + window.pageXOffset,
+    top: s1Coordinates.top + window.pageYOffset,
+    behavior: 'smooth'
+  });
+  // ES6
+  // section1.scrollIntoView({behavior: 'smooth'});
+});
