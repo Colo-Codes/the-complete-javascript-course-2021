@@ -1,5 +1,8 @@
 'use strict';
 
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
 ///////////////////////////////////////
 // Modal window
 
@@ -30,6 +33,43 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+///////////////////////////////////////
+// Button scrolling
+
+btnScrollTo.addEventListener('click', function (e) {
+  // Smooth scrolling
+  // ES6
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
+
+///////////////////////////////////////
+// Page (smooth) navigation
+
+// document.querySelectorAll('.nav__link').forEach(function (element) {
+//   element.addEventListener('click', function (event2) {
+//     event2.preventDefault(); // To prevent the HTML scroll to anchored section
+//     const id = this.getAttribute('href'); // this === event2
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// });
+
+// Event delegation (to prevent repeating the listener function for each element)
+// 1. Add event listener to common parent element
+// 2. Determine what element originated the event
+
+document.querySelector('.nav__links').addEventListener('click', function (e) { // 1.
+  e.preventDefault();
+
+  // Matching strategy (2.)
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    console.log(id);
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+/////////////////////////////////////////////////////////
 // SECTION *** Selecting elements ***
 
 // Select the whole HTML document (no need to use spacial selectors for this element)
@@ -211,7 +251,7 @@ logo.classList.contains('class_name');
 logo.className = 'I_will_override_all';
 
 // SECTION *** Getting information about viewport scrolling and position ***
-
+/*
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
 
@@ -241,7 +281,7 @@ btnScrollTo.addEventListener('click', function (e) {
   // ES6
   section1.scrollIntoView({ behavior: 'smooth' });
 });
-
+*/
 // SECTION *** Types of events and event handlers ***
 
 // Add and remove event listeners
@@ -291,7 +331,7 @@ setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
 // <h1 onclick="alert('Clicked on HTML h1')">
 
 // SECTION *** Event propagation: bubbling and capturing ***
-
+/*
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min) + 1 + min);
 
 const randomColor = () => `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
@@ -329,8 +369,12 @@ document.querySelector('.nav').addEventListener('click', function (e) {
   // The 'target' is where the event happens; not where the event listener is attached to.
   // The 'currentTarget' is the current event in the capturing/bubbling step.
 
-  /*
-  If we want to listen for an event in the capture phase, we have to set the third argument of the addEventListener method to true:
-  - element`.addEventListener('click', function(){...}, **true**)`
-  */
+  // If we want to listen for an event in the capture phase, we have to set the third argument of the addEventListener method to true:
+  // - element`.addEventListener('click', function(){...}, **true**)`
 }, false);
+*/
+
+// SECTION *** Event delegation ***
+
+// lines 45 - 71
+
