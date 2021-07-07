@@ -2,14 +2,17 @@
 
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
-
-///////////////////////////////////////
-// Modal window
-
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
+
+///////////////////////////////////////
+// Modal window
 
 const openModal = function (e) {
   e.preventDefault();
@@ -72,10 +75,6 @@ document.querySelector('.nav__links').addEventListener('click', function (e) { /
 ///////////////////////////////////////
 // Tabbed component
 
-const tabs = document.querySelectorAll('.operations__tab');
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
-
 // Avoiding creating an event listener for each of the tab buttons by using event delegation
 tabsContainer.addEventListener('click', function (event) {
   // Matching strategy
@@ -94,6 +93,26 @@ tabsContainer.addEventListener('click', function (event) {
   // Activate content area
   document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
 });
+
+///////////////////////////////////////
+// Tabbed component
+
+const handleHover = function (event) {
+  if (event.target.classList.contains('nav__link')) {
+    const link = event.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(s => {
+      if (s !== link) s.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+// Using the 'bind' method to call a function with 'this' keyword equal to the opacity that we want.
+nav.addEventListener('mouseover', handleHover.bind(0.5)); // 'Bind' returns a function, which has an event parameter, which is used with the 'event' argument provided by the 'addEventListener'.
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 /////////////////////////////////////////////////////////
 // SECTION *** Selecting elements ***
