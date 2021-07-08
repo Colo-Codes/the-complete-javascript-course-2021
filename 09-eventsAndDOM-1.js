@@ -649,8 +649,12 @@ window.addEventListener('load', function (e) {
   console.log('HTML parsed, CSS parsed, images loaded, and DOM tree built!', e);
 });
 
+/*
 window.addEventListener('beforeunload', function (e) {
   e.preventDefault();
   console.log(e);
   e.returnValue = '';
 });
+*/
+
+// SECTION ***   ***
