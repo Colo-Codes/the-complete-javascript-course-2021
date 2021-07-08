@@ -114,6 +114,52 @@ const handleHover = function (event) {
 nav.addEventListener('mouseover', handleHover.bind(0.5)); // 'Bind' returns a function, which has an event parameter, which is used with the 'event' argument provided by the 'addEventListener'.
 nav.addEventListener('mouseout', handleHover.bind(1));
 
+///////////////////////////////////////
+// Sticky navigation
+
+// This approach is not efficient and should be avoided (produces output each time we scroll)
+// const initialCoords = section1.getBoundingClientRect();
+// window.addEventListener('scroll', function () {
+//   console.log(window.scrollY);
+//   if (window.scrollY >= initialCoords.top) nav.classList.add('sticky');
+//   else nav.classList.remove('sticky');
+// });
+
+// Using Intersection Observer API
+
+// Example (start)
+// const obsCallback = function (entries, observer) {
+//   entries.forEach(entry => {
+//     console.log(entry);
+//   })
+// }
+
+// const obsOptions = {
+//   root: null,
+//   threshold: 0.1
+// }
+
+// const observer = new IntersectionObserver(obsCallback, obsOptions);
+
+// observer.observe(section1);
+// Example (end)
+
+const header = document.querySelector('.header');
+const navHight = nav.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  entry.isIntersecting ? nav.classList.remove('sticky') : nav.classList.add('sticky');
+}
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null, // Entire viewport
+  threshold: 0,
+  rootMargin: `-${navHight}px`
+});
+
+headerObserver.observe(header);
+
 /////////////////////////////////////////////////////////
 // SECTION *** Selecting elements ***
 
@@ -189,22 +235,22 @@ console.log(message);
 // -> div.cookie-message (node) and <div class="cookie-message">We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button></div>
 
 // prepend(), append(), before(), after()
-const header = document.querySelector('header'); // Element
-// header.prepend(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+const header2 = document.querySelector('header'); // Element
+// header2.prepend(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <header class="header">
   <div class="cookie-message"> ... </div>
   ...
   </header>
 */
-header.append(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+header2.append(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <header class="header">
   ...
   <div class="cookie-message"> ... </div>
   </header>
 */
-// header.append(message.cloneNode(true)); // Creates a copy of the element and inserts it into the DOM
+// header2.append(message.cloneNode(true)); // Creates a copy of the element and inserts it into the DOM
 /*
 <header class="header">
   ...
@@ -212,14 +258,14 @@ header.append(message); // (!) IMPORTANT: Inserts or moves (if it already exists
   <div class="cookie-message"> ... </div>
   </header>
 */
-// header.before(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+// header2.before(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <div class="cookie-message"> ... </div>
 <header class="header">
   ...
   </header>
 */
-// header.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
+// header2.after(message); // (!) IMPORTANT: Inserts or moves (if it already exists) the element
 /*
 <header class="header">
 ...
