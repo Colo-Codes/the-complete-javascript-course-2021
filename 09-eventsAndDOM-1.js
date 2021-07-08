@@ -167,7 +167,7 @@ const sections = document.querySelectorAll('.section');
 
 const revealSection = function (entries) {
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
   // Guard clause
   if (!entry.isIntersecting) return;
 
@@ -190,7 +190,32 @@ sections.forEach(sec => {
 ///////////////////////////////////////
 // Lazy image loading
 
+const imgTargets = document.querySelectorAll('img[data-src]');
 
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  // Replace img
+  entry.target.src = entry.target.dataset.src;
+
+  // Removing blur filter after the high resolution image is loaded
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img'); // Blur filter
+  });
+
+  observer.unobserve(entry.target); // Remove the observer
+
+}
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px' // To load images before the user reaches them
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));
 
 
 
