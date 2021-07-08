@@ -160,6 +160,40 @@ const headerObserver = new IntersectionObserver(stickyNav, {
 
 headerObserver.observe(header);
 
+///////////////////////////////////////
+// Reveal section
+
+const sections = document.querySelectorAll('.section');
+
+const revealSection = function (entries) {
+  const [entry] = entries;
+  console.log(entry);
+  // Guard clause
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  sectionObserver.unobserve(entry.target); // Remove the observer on the section that is already showing so it stops triggering unnecessarily
+};
+
+const options = {
+  root: null,
+  threshold: 0.15,
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, options);
+
+sections.forEach(sec => {
+  sec.classList.add('section--hidden');
+  sectionObserver.observe(sec);
+});
+
+///////////////////////////////////////
+// Lazy image loading
+
+
+
+
+
 /////////////////////////////////////////////////////////
 // SECTION *** Selecting elements ***
 
