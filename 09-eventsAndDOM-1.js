@@ -639,4 +639,18 @@ console.log(myH1.parentElement.children);
 //   if (el !== myH1) el.style.transform = 'scale(0.5)';
 // });
 
-// SECTION *** ***
+// SECTION *** Lifecycle DOM events ***
+
+document.addEventListener('DOMContentLoaded', function (e) {
+  console.log('HTML parsed and DOM tree built!', e);
+});
+
+window.addEventListener('load', function (e) {
+  console.log('HTML parsed, CSS parsed, images loaded, and DOM tree built!', e);
+});
+
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  console.log(e);
+  e.returnValue = '';
+});
