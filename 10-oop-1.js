@@ -84,3 +84,90 @@ console.log(damian.hasOwnProperty('firstName'));
 // -> true
 console.log(damian.hasOwnProperty('species'));
 // -> false
+
+// SECTION *** Prototypal inheritance/delegation ***
+
+// 1. We start by creating a constructor (just a regular function until it's called with the 'new' operator), based on some set of properties that we need. 
+
+const PersonConstructor = function (firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+}
+
+// That constructor (it's actually a function and, hence an object in JavaScript) will have a prototype (all objects in JavaScript have prototypes) which is an object that contains the constructor (that contains an object that contains the constructor, ad infinitum). So, the prototype defines the constructor. Every function in JavaScript has the 'prototype' property.
+
+console.log(PersonConstructor.prototype);
+// -> {}
+console.log(PersonConstructor.prototype.constructor);
+// -> [Function: PersonConstructor]
+console.log(PersonConstructor.prototype.constructor.prototype);
+// -> {}...
+
+// 2. We can define methods (and properties) on the prototype of the constructor, and those methods (and properties) will be inherited (delegated) to the constructor instances that were/will be created with the 'new' operator. At this point, the constructor has properties directly defined in it, and also methods defined in its prototype (which, in time, has also a constructor (with properties) that has a prototype, ad infinitum).
+
+PersonConstructor.prototype.fullName = function () {
+    return this.firstName + ' ' + this.lastName;
+}
+
+console.log(PersonConstructor.prototype);
+// -> { fullName: [Function (anonymous)] }
+
+// 3. We can create an instance of the constructor that will inherit its properties from it and the methods and properties defined in its prototype. The properties defined in the constructor are directly accessible on the instance, and the methods defined in the prototype are also directly accessible, even though these last ones are defined on the __proto__ property of the instance, which is actually how the prototype is called in an instance and is actually a link to the methods defined in the prototype property of the constructor.
+
+const myPerson = new PersonConstructor('John', 'Doe');
+console.log(myPerson);
+// -> PersonConstructor { firstName: 'John', lastName: 'Doe' }
+console.log(myPerson.__proto__);
+// -> { fullName: [Function(anonymous)] }
+console.log(myPerson.fullName());
+// -> John Doe
+
+// The __proto__ property exists on the instance, even though we haven't defined it, because all objects in JavaScript have a prototype (our instance of the constructor is an object as well). Here, __proto__ is an object built from the 'prototype' object defined on the constructor.
+
+// What relation has the 'prototype' property of the constructor and the '__proto__' property of the instance? __proto__ is the actual object that is used in the lookup chain to resolve methods, etc., whilst prototype is the object that is used to build __proto__ when you create an object with 'new'. So prototype is not available on the instances themselves (or other objects), but only on the constructor functions. (https://stackoverflow.com/questions/9959727/proto-vs-prototype-in-javascript)
+
+console.log(myPerson.__proto__ === PersonConstructor.prototype);
+// -> true // __proto__ = PersonConstructor.prototype
+
+// SECTION *** Prototype chain ***
+
+console.log(damian.__proto__);
+// -> { calcAge: [Function (anonymous)], species: 'Homo Sapiens' } // This is the PersonConstructor.prototype
+console.log(damian.__proto__.__proto__);
+// -> [Object: null prototype] {} // This is damian.__proto__.__proto__ = PersonConstructor.__proto__ = Object.prototype
+console.log(damian.__proto__.__proto__.__proto__);
+// -> null // This is the Object.__proto__ = null
+
+// Analysing arrays
+
+const arr = [1, 2, 3, 3, 2, 1, 9]; // new Array === [...]
+console.log(arr.__proto__);
+// -> Object(0)[]
+
+console.log(arr.__proto__ === Array.prototype);
+// -> true
+
+console.log(arr.__proto__.__proto__);
+// -> [Object: null prototype] {}
+
+console.log(arr.__proto__.__proto__.__proto__);
+// -> null
+
+Array.prototype.unique = function () { // Don't do this on production code
+    return [...new Set(this)];
+};
+
+console.log(arr.unique());
+// -> [ 1, 2, 3, 9 ]
+
+// Analysing an h1
+
+const h1 = document.querySelector('h1');
+
+console.dir(h1);
+// On the browser: h1 -> __proto__: HTMLHeadingElement -> __proto__: HTMLElement -> __proto__: Element -> __proto__: Node -> __proto__: EventTarget -> __proto__: Object -> null
+
+// Analysing a function
+
+console.dir(x => x + 1);
+// On the browser: anonymous() -> __proto__: ƒ() -> __proto__: Object -> null
