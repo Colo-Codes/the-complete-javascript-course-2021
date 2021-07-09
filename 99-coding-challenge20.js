@@ -38,7 +38,7 @@ Car.prototype.accelerate = function () {
 // 3.
 
 Car.prototype.brake = function () {
-  console.log(`${this.make} going to ${this.speed -= 5} Km/h`);
+  return console.log(`${this.make} going to ${this.speed -= 5} Km/h`);
 };
 
 // 4.
