@@ -171,3 +171,51 @@ console.dir(h1);
 
 console.dir(x => x + 1);
 // On the browser: anonymous() -> __proto__: ƒ() -> __proto__: Object -> null
+
+// SECTION *** Classes ***
+
+// Class expression
+
+const PersonClEx = class {
+    // Body of the class
+}
+
+// Class declaration
+
+class PersonClDe {
+    constructor(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // Methods will be added to the .prototype property of the constructor
+    fullName() {
+        console.log(this.firstName + ' ' + this.lastName);
+    }
+
+    greet() {
+        console.log(`Hey ${this.firstName}!`);
+    }
+}
+
+const jessica = new PersonClDe('Jessica', 'Pearson');
+
+console.log(jessica);
+// -> PersonClDe {firstName: "Jessica", lastName: "Pearson"}
+jessica.fullName();
+// -> Jessica Pearson
+console.log(jessica.__proto__);
+// -> {constructor: ƒ, fullName: ƒ}
+
+PersonClDe.prototype.greet2 = function () {
+    console.log(`Bye ${this.firstName}!`);
+}
+jessica.greet();
+// -> Hey Jessica!
+jessica.greet2();
+// -> Bye Jessica!
+
+// 1. Classes are not hoisted (we can't use them before they are declared)
+// 2. Classes are first-class citizens  (we can pass them to functions and return them from functions)
+// 3. Body of classes is always executed in strict mode
+
