@@ -370,3 +370,70 @@ console.log(sarah);
 
 sarah.age();
 // -> 30
+
+// SECTION *** Class inheritance (using constructors) ***
+
+// Create constructors
+const Person10 = function (firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+};
+
+Person10.prototype.calcAge = function () {
+    console.log(2021 - this.birthYear);
+};
+
+const Student = function (firstName, birthYear, course) {
+    // this.firstName = firstName;
+    // this.birthYear = birthYear;
+    Person10.call(this, firstName, birthYear); // We call the function with the 'this' keyword set to 'this'
+    this.course = course;
+};
+
+// Linking prototypes
+Student.prototype = Object.create(Person10.prototype);
+
+Student.prototype.introduce = function () {
+    console.log(`My name is ${this.firstName} and I study ${this.course}`);
+}
+
+// Create instances
+const mike = new Student('Mike', 1999, 'Computer Science');
+
+console.log(mike);
+// -> Student {firstName: "Mike", birthYear: 1999, course: "Computer Science"}
+
+mike.introduce();
+// -> My name is Mike and I study Computer Science
+
+mike.calcAge(); // (!) IMPORTANT: this works thanks to prototypal inheritance defined as: Student.prototype = Object.create(Person10.prototype);
+// -> 22
+
+console.log(mike.__proto__); // The proto of the instance
+// -> Person10 {introduce: ƒ}
+console.log(mike.__proto__.__proto__); // The proto of the child class
+// -> {calcAge: ƒ, constructor: ƒ}
+console.log(mike.__proto__.__proto__.__proto__); // The proto of the parent class
+// -> { constructor: ƒ, __defineGetter__: ƒ, __defineSetter__: ƒ, hasOwnProperty: ƒ, __lookupGetter__: ƒ, … }
+console.log(mike.__proto__.__proto__.__proto__.__proto__); // The proto of Object
+// -> null
+
+console.log(mike instanceof Student);
+// -> true
+console.log(mike instanceof Person10);
+// -> true
+console.log(mike instanceof Object);
+// -> true
+
+// Pointing the constructor of mike to Student instead of to Person10
+Student.prototype.constructor = Student;
+
+console.log(mike.__proto__); // The proto of the instance
+/* ->
+Person10 {introduce: ƒ, constructor: ƒ}
+    constructor: ƒ (firstName, birthYear, course)
+    arguments: (...)
+    caller: (...)
+    length: 3
+    name: "Student"
+*/
