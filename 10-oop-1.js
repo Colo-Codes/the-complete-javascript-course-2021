@@ -437,3 +437,47 @@ Person10 {introduce: ƒ, constructor: ƒ}
     length: 3
     name: "Student"
 */
+
+// SECTION *** Class inheritance (using ES6 classes) ***
+
+class Person20 {
+    constructor(fullName, birthYear) {
+        this.fullName = fullName;
+        this.birthYear = birthYear;
+    }
+
+    // Methods will be added to the .prototype property of the constructor
+    age() {
+        console.log(2021 - this.birthYear);
+    }
+
+    static staticHey() {
+        console.log('Hey there!');
+    }
+}
+
+class StudentCl extends Person20 { // Linking prototypes behind the scene
+    constructor(fullName, birthYear, course) {
+        // This needs to happen first to using the 'this' keyword (if no 'this' keyword will be used, there is no need to use the 'super' keyword)
+        super(fullName, birthYear) // 'super()' calls the constructor function of the parent class
+        this.course = course;
+    }
+
+    introduce() {
+        console.log(`My name is ${this.fullName} and I study ${this.course}`);
+    }
+
+    age() { // Polymorphism
+        console.log(`I'm ${2021 - this.birthYear} years old, but I feel like ${2021 - this.birthYear + 10} :(`);
+    }
+}
+
+const martha = new StudentCl('Martha Jones', 2000, 'Arts');
+console.log(martha);
+// -> StudentCl {fullName: "Martha Jones", birthYear: 2000, course: "Arts"}
+
+martha.introduce();
+// -> My name is Martha Jones and I study Arts
+
+martha.age();
+// -> I'm 21 years old, but I feel like 31 :(
