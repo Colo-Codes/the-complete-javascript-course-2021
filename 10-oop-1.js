@@ -219,3 +219,62 @@ jessica.greet2();
 // 2. Classes are first-class citizens  (we can pass them to functions and return them from functions)
 // 3. Body of classes is always executed in strict mode
 
+// SECTION *** Getters and Setters ***
+
+const account = {
+    owner: 'Jonas',
+    movements: [200, 333, 555, 777],
+
+    get latest() {
+        return this.movements.slice(-1).pop();
+    },
+
+    set latest(mov) {
+        this.movements.push(mov);
+    }
+}
+
+console.log(account.latest);
+// -> 777
+
+account.latest = 123;
+console.log(account.movements);
+// -> [200, 333, 555, 777, 123]
+
+// Using getters and setters on classes
+
+class Person2 {
+    constructor(fullName, birthYear) {
+        this.fullName = fullName;
+        this.birthYear = birthYear;
+    }
+
+    // Methods will be added to the .prototype property of the constructor
+    age() {
+        console.log(2021 - this.birthYear);
+    }
+
+    get age() {
+        return 2021 - this.birthYear;
+    }
+
+    // Set (and get) a property that already exists
+    set fullName(name) {
+        if (name.includes(' '))
+            this._fullName = name; // Can't set the value to the same variable that is being used in the constructor (stack overflow), so we define a new variable (with underscore at the start as convention, and the same name)
+        else
+            alert(`${name} is not a full name!`);
+    }
+
+    get fullName() {
+        return this._fullName; // In the end, this works as if it were an object property
+    }
+}
+
+const damian2 = new Person2('Damian Demasi', 1981);
+
+console.log(damian2.age);
+// -> 40
+
+console.log(damian2.fullName); // Calling the getter, not the property
+// -> Damian Demasi
