@@ -481,3 +481,49 @@ martha.introduce();
 
 martha.age();
 // -> I'm 21 years old, but I feel like 31 :(
+
+// SECTION *** Class inheritance (using Object.create() method) ***
+
+const PersonProto2 = {
+    age() {
+        console.log(2021 - this.birthYear);
+    },
+
+    init(firstName, birthYear) {
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+}
+
+const steven2 = Object.create(PersonProto2);
+
+// Linking prototypes
+const StudentProto = Object.create(PersonProto2);
+
+StudentProto.init = function (firstName, birthYear, course) {
+    PersonProto2.init.call(this, firstName, birthYear);
+    this.course = course;
+}
+
+StudentProto.introduce = function () {
+    console.log(`My name is ${this.firstName} and I study ${this.course}`);
+}
+const jay = Object.create(StudentProto);
+
+jay.init('Jay', 1990, 'Computer Science');
+
+console.log(jay);
+/* ->
+{firstName: "Jay", birthYear: 1990, course: "Computer Science"}
+    __proto__:  init: ƒ (firstName, birthYear, course)
+                introduce: ƒ ()
+        __proto__:  age: ƒ age()
+                    init: ƒ init(firstName, birthYear)
+            __proto__: Object
+*/
+
+jay.introduce();
+// -> My name is Jay and I study Computer Science
+
+jay.age();
+// -> 31
