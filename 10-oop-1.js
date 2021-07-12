@@ -278,3 +278,55 @@ console.log(damian2.age);
 
 console.log(damian2.fullName); // Calling the getter, not the property
 // -> Damian Demasi
+
+// SECTION *** Static methods ***
+
+// The 'from' method is a method attached to the Array constructor. We can't use that method on an array object. This is a static method.
+console.log(Array.from(document.querySelectorAll('h1')));
+// -> [h1]
+// [1, 2, 3].from();
+// -> Uncaught TypeError: [1,2,3].from is not a function
+
+// The same happens with the 'parseInt' method
+console.log(Number.parseInt('123abc;'));
+// -> 123
+
+// *** Creating a static method on a constructor
+
+const Person3 = function (firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+}
+
+Person3.staticHey = function () {
+    console.log('Hey there!');
+}
+
+const damian3 = new Person3('Damian', 1981);
+
+Person3.staticHey();
+// -> Hey there!
+
+// damian3.staticHey();
+// -> Uncaught TypeError: damian3.staticHey is not a function
+
+// *** Creating a static method on a class
+
+class Person4 {
+    constructor(fullName, birthYear) {
+        this.fullName = fullName;
+        this.birthYear = birthYear;
+    }
+
+    // Methods will be added to the .prototype property of the constructor
+    age() {
+        console.log(2021 - this.birthYear);
+    }
+
+    static staticHey() {
+        console.log('Hey there!');
+    }
+}
+
+Person4.staticHey();
+// -> Hey there!
