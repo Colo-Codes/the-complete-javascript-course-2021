@@ -330,3 +330,43 @@ class Person4 {
 
 Person4.staticHey();
 // -> Hey there!
+
+// SECTION *** Object.create method ***
+
+const PersonProto = {
+    age() {
+        console.log(2021 - this.birthYear);
+    },
+
+    init(firstName, birthYear) {
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+}
+
+const steven = Object.create(PersonProto);
+
+console.log(steven); // It's an empty object with the 'age' method in its prototype
+/* ->
+{}
+    __proto__:
+        age: ƒ age()
+        __proto__: Object
+*/
+
+steven.name = 'Steven';
+steven.birthYear = 1990;
+
+steven.age();
+// -> 31
+
+console.log(steven.__proto__ === PersonProto); // This is important
+// -> true
+
+const sarah = Object.create(PersonProto);
+sarah.init('Sarah', 1991);
+console.log(sarah);
+// -> {firstName: "Sarah", birthYear: 1991}
+
+sarah.age();
+// -> 30
