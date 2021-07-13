@@ -527,3 +527,113 @@ jay.introduce();
 
 jay.age();
 // -> 31
+
+// SECTION *** Working with classes: data privacy and encapsulation ***
+
+// In modern JavaScript, we have:
+// 1. Public fields (properties)
+// 2. Private fields (properties)
+// 3. Public methods
+// 4. Private methods
+// (There is also the 'static' version of this, containing 4 implementations as above)
+
+class Account {
+    // 1. Public fields (fields common to all instances)
+    locale = navigator.language;
+    // _movements = [];
+
+    // 2. Private fields (not accessible from outside the class; fields common to all instances)
+    #movements = [];
+    #pin;
+
+    constructor(owner, currency, pin) {
+        this.owner = owner;
+        this.currency = currency;
+        // this._pin = pin; // Underscore is a convention to 'protect' this property
+        // this._movements = []; // Underscore is a convention to 'protect' this property
+        this.#pin = pin; // Underscore is a convention to 'protect' this property
+        // this.locale = navigator.language;
+
+        console.log(`Thanks for opening an account, ${owner}`);
+    }
+
+    // It is not a good idea to interact directly with properties on sensitive data, so we should create methods to do so. This technique will also prevent bugs from happening.
+    // These methods are the interface to our object. We can also call this the object's API.
+
+    // 3. Public methods
+
+    deposit(val) {
+        // this._movements.push(val);
+        this.#movements.push(val);
+    }
+
+    withdraw(val) {
+        this.deposit(-val);
+    }
+
+    // _approveLoan(val) { // Underscore is a convention to 'protect' this property
+    //     return true; // Not overcomplicate the example
+    // }
+
+    requestLoan(val) {
+        // if (this._approveLoan(val)) {
+        if (this._approveLoan(val)) {
+            this.deposit(val);
+            console.log(`Loan approved.`);
+        }
+    }
+
+    getMovements() {
+        // return this._movements;
+        return this.#movements;
+    }
+
+    static helper() {
+        console.log(`Helper!`);
+    }
+
+    // 4. Private methods
+
+    // #approveLoan(val) { // Does not work on Safari or Firefox (July 2021), but it works as a class field (not as a method) on Chrome
+    _approveLoan(val) {
+        return true; // Not overcomplicate the example
+    }
+};
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+
+// *** Before implementing encapsulation
+
+// This is not a good idea:
+// acc1.movements.push(250);
+
+console.log(acc1);
+// -> Account {owner: "Jonas", currency: "EUR", pin: 1111, movements: Array(0), locale: "en-AU"}
+
+acc1.deposit(250);
+acc1.withdraw(140);
+console.log(acc1);
+// -> Account {owner: "Jonas", currency: "EUR", pin: 1111, movements: [250, -140], locale: "en-AU"}
+
+// *** After implementing encapsulation
+
+console.log(acc1.getMovements());
+// -> [250, -140]
+
+// *** After implementing private fields
+
+// console.log(acc1.#movements);
+// -> Uncaught SyntaxError: Private field '#movements' must be declared in an enclosing class
+
+// console.log(acc1.#pin);
+// -> Uncaught SyntaxError: Private field '#pin' must be declared in an enclosing class
+
+acc1.requestLoan(1234);
+// -> Loan approved.
+console.log(acc1.getMovements());
+// -> [250, -140, 1234]
+// console.log(acc1.#approveLoan);
+// -> Uncaught SyntaxError: Private field '#approveLoan' must be declared in an enclosing class
+
+Account.helper();
+// -> Helper!
