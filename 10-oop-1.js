@@ -565,10 +565,12 @@ class Account {
     deposit(val) {
         // this._movements.push(val);
         this.#movements.push(val);
+        return this; // To allow methods to be chained
     }
 
     withdraw(val) {
         this.deposit(-val);
+        return this; // To allow methods to be chained
     }
 
     // _approveLoan(val) { // Underscore is a convention to 'protect' this property
@@ -580,6 +582,7 @@ class Account {
         if (this._approveLoan(val)) {
             this.deposit(val);
             console.log(`Loan approved.`);
+            return this; // To allow methods to be chained
         }
     }
 
@@ -637,3 +640,14 @@ console.log(acc1.getMovements());
 
 Account.helper();
 // -> Helper!
+
+// SECTION *** Chaining methods ***
+
+// We want to do:
+// acc1.deposit(200).deposit(500).withdraw(150).requestLoan(25000).withdraw(4000);
+// -> Uncaught TypeError: Cannot read property 'deposit' of undefined
+
+// After returning 'this' on each method:
+acc1.deposit(200).deposit(500).withdraw(150).requestLoan(25000).withdraw(4000);
+console.log(acc1.getMovements());
+// -> [..., 200, 500, -150, 25000, -4000]
