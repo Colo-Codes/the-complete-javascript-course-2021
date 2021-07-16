@@ -50,6 +50,7 @@ GOOD LUCK
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
+let compoundError;
 
 const callError = function (errorMsg) {
   throw new Error(errorMsg);
@@ -70,7 +71,8 @@ const spinner = function (toggleShow) {
     <img src="https://raw.githubusercontent.com/Colo-Codes/the-complete-javascript-course-2021/main/assets/img/async/spinner.gif" id="spinner">
     `;
   } else {
-    countriesContainer.removeChild(document.getElementById('spinner'));
+    if (document.getElementById('spinner'))
+      countriesContainer.removeChild(document.getElementById('spinner'));
   }
 }
 
@@ -84,12 +86,14 @@ const whereAmI = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => {
       // console.log(response);
+      if (!response.ok)
+        compoundError = response.status;
       return response.json();
     }, reject => callError(`(2) (${reject})`)) //5.
     .then(data => {
       // console.log(data);
       if (data.error) {
-        callError(`(3) (${data.error.code}) ${data.error.message || data.error.description}`); //5.
+        callError(`(3) Main reason: ${compoundError} - (${data.error.code}) ${data.error.message || data.error.description}`); //5.
       } else {
         // 3.
         // console.log(data);
@@ -99,16 +103,6 @@ const whereAmI = function (lat, lng) {
     })
     .catch(err => displayError(err)); // 4.
 }
-
-// Use for testing errors:
-// let i = 0;
-// setInterval(() => {
-//   if (i < 10)
-//     whereAmI();
-//   i++;
-// }, 100);
-
-// whereAmI();
 
 // 6. & 7.
 
@@ -171,6 +165,9 @@ const getCountryData = function (country) {
 btn.addEventListener('click', function () {
   // whereAmI(-34.9247781, 138.5978623);
   whereAmI(52.508, 13.381);
+  // whereAmI(52.508, 13.381);
+  // whereAmI(52.508, 13.381);
+  // whereAmI(52.508, 13.381);
   // whereAmI(19.037, 72.873);
   // whereAmI(-33.933, 18.474);
 });
