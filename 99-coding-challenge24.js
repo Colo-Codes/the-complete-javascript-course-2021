@@ -64,12 +64,13 @@ const displayError = function (errorMsg) {
 };
 
 const spinner = function (toggleShow) {
-  countriesContainer.style.opacity = `${toggleShow}`;
+  countriesContainer.style.opacity = '1';
   if (toggleShow) {
     countriesContainer.innerHTML = `
-    <img src=>
+    <img src="https://raw.githubusercontent.com/Colo-Codes/the-complete-javascript-course-2021/main/assets/img/async/spinner.gif" id="spinner">
     `;
-
+  } else {
+    countriesContainer.removeChild(document.getElementById('spinner'));
   }
 }
 
@@ -79,6 +80,7 @@ const whereAmI = function (lat, lng) {
   // 2.
   // Use for testing errors:
   // fetch(`https://geocode.xyz/-34.9247781,8888.5978623?geoit=json`)
+  spinner(1);
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => {
       // console.log(response);
@@ -145,6 +147,8 @@ const getCountryData = function (country) {
   // Country 1
   getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
     .then(data => {
+      spinner(0);
+
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
       // const neighbour = 'asdasd';
