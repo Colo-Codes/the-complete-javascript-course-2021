@@ -57,7 +57,7 @@ const renderCountry = function (data, className = '') {
             </article>`;
 
     countriesContainer.insertAdjacentHTML('beforeend', html);
-    countriesContainer.style.opacity = '1';
+    // countriesContainer.style.opacity = '1';
 };
 
 // SECTION Callback hell
@@ -127,12 +127,32 @@ const getCountryData100 = function (country) {
 // The 'json' method also returns a promise
 // Which is handled by the second 'then' method and its callback
 
-// SECTION Chaining Promises
+// SECTION Chaining Promises and handling Promise rejections (errors)
+
+const renderError = function (msg) {
+    countriesContainer.insertAdjacentText('beforeend', msg);
+    // countriesContainer.style.opacity = '1';
+};
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+    return fetch(url)
+        .then(response => {
+            if (!response.ok)
+                throw new Error(`${errorMsg} (${response.status})`);
+            return response.json();
+        });
+};
 
 const getCountryData = function (country) {
     // Country 1
     fetch(`https://restcountries.eu/rest/v2/name/${country}`)
-        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+
+            if (!response.ok)
+                throw new Error(`Country not found (${response.status})`);
+            return response.json();
+        })
         .then(data => {
             renderCountry(data[0]);
             const neighbour = data[0].borders[0];
@@ -140,7 +160,7 @@ const getCountryData = function (country) {
             if (!neighbour) return;
 
             // Country 2
-            // Whatever we return from a promise (then), it will become the fulfilment value of that promise. This allow us to chain promises.
+            // Whatever we return from a promise (fetch), it will become the fulfilment value of that promise. This allow us to chain promises.
             return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbour}`);
         })
         .then(response => response.json())
@@ -152,10 +172,46 @@ const getCountryData = function (country) {
             return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbour}`);
         })
         .then(response => response.json())
-        .then(data => renderCountry(data, 'neighbour')
-        );
+        .then(data => renderCountry(data, 'neighbour'))
+        .catch(err => {
+            console.error(`${err} 💥💥💥`);
+            renderError(`Something went wrong: ${err.message}`);
+        })
+        .finally(() => countriesContainer.style.opacity = '1');
+};
+
+const getCountryData2 = function (country) {
+    // Country 1
+    getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
+        .then(data => {
+            renderCountry(data[0]);
+            const neighbour = data[0].borders[0];
+            // const neighbour = 'asdasd';
+
+            if (!neighbour) throw new Error('The country has no neighbours');
+
+            // Country 2
+            // Whatever we return from a promise (fetch), it will become the fulfilment value of that promise. This allow us to chain promises.
+            return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found');
+        })
+        .then(data => renderCountry(data, 'neighbour'))
+        .catch(err => {
+            console.error(`${err} 💥💥💥`);
+            renderError(`Something went wrong: ${err.message}`);
+        })
+        .finally(() => countriesContainer.style.opacity = '1');
 };
 
 // fetch().then().then( return fetch() ).then().then( return fetch() ).then().then()
 
-getCountryData('italy');
+// btn.addEventListener('click', function () {
+//     getCountryData('italy');
+// });
+
+btn.addEventListener('click', function () {
+    // getCountryData2('italy');
+    // getCountryData2('germany');
+    getCountryData2('australia');
+});
+
+// getCountryData('atlantis'); // Error triggering call
