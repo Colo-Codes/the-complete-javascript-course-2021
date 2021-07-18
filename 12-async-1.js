@@ -215,3 +215,17 @@ btn.addEventListener('click', function () {
 });
 
 // getCountryData('atlantis'); // Error triggering call
+
+// SECTION Async Javascript
+
+console.log('Test start'); // Synchronous code
+setTimeout(() => console.log('0 sec timer'), 0); // On the callback queue
+Promise.resolve('Resolved promise 1').then(res => console.log(res)); // On the microtasks queue (higher priority than callback queue)
+console.log('Test end'); // Synchronous code
+/* ->
+Test start
+Test end
+Resolved promise 1
+0 sec timer
+*/
+
