@@ -129,10 +129,10 @@ const renderCountry = function (data, className = '') {
 
 // SECTION Chaining Promises and handling Promise rejections (errors)
 
-// const renderError = function (msg) {
-//     countriesContainer.insertAdjacentText('beforeend', msg);
-//     // countriesContainer.style.opacity = '1';
-// };
+const renderError = function (msg) {
+    countriesContainer.insertAdjacentText('beforeend', msg);
+    // countriesContainer.style.opacity = '1';
+};
 
 // const getJSON = function (url, errorMsg = 'Something went wrong') {
 //     return fetch(url)
@@ -329,46 +329,97 @@ const renderCountry = function (data, className = '') {
 
 // SECTION Async & Await
 
+// const getPositionNew = function () {
+//     return new Promise(function (resolve, reject) {
+//         navigator.geolocation.getCurrentPosition(resolve, reject);
+//     });
+// };
+
+// // // Old way
+// // const whereAmI1 = function (country) {
+// //     return fetch(`https://restcountries.eu/rest/v2/name/${country}`)
+// //         .then(res => res.json());
+// // };
+
+// // whereAmI1('australia').then(res => console.log(`1 ---> ${JSON.stringify(res[0])}`));
+
+// // New way (including other await examples)
+// const whereAmI2 = async function () {
+//     // Geolocation
+//     const pos = await getPositionNew();
+//     const { latitude: lat, longitude: lng } = pos.coords;
+//     // Reverse geocoding
+//     const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//     // if (!resGeo.ok) throw new Error('Problem getting location data');
+//     const dataGeo = await resGeo.json();
+//     console.log('1 -', resGeo);
+//     console.log('2 -', dataGeo);
+
+//     // Country data
+//     const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+//     // if (!res.ok) throw new Error('Problem getting country');
+//     const data = await res.json();
+//     console.log('--->', data[0].name);
+//     renderCountry(data[0]);
+// };
+
+// whereAmI2();
+// console.log('---> FIRST');
+// /* ->
+// ---> FIRST
+// ---> Response {type: "cors", url: "https://restcountries.eu/rest/v2/name/australia", redirected: false, status: 200, ok: true, …}
+// */
+
+// SECTION try...catch
+
+try {
+    const x = 1;
+    x++
+} catch (err) {
+    console.log(`There was an error: ${err.message}`);
+}
+// -> There was an error: Assignment to constant variable.
+
+
 const getPositionNew = function () {
     return new Promise(function (resolve, reject) {
         navigator.geolocation.getCurrentPosition(resolve, reject);
     });
 };
 
-// // Old way
-// const whereAmI1 = function (country) {
-//     return fetch(`https://restcountries.eu/rest/v2/name/${country}`)
-//         .then(res => res.json());
-// };
-
-// whereAmI1('australia').then(res => console.log(`1 ---> ${JSON.stringify(res[0])}`));
-
-// New way (including other await examples)
 const whereAmI2 = async function () {
-    // Geolocation
-    const pos = await getPositionNew();
-    const { latitude: lat, longitude: lng } = pos.coords;
-    // Reverse geocoding
-    const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
-    // if (!resGeo.ok) throw new Error('Problem getting location data');
-    const dataGeo = await resGeo.json();
-    console.log('1 -', resGeo);
-    console.log('2 -', dataGeo);
+    try {
+        // Geolocation
+        const pos = await getPositionNew();
+        const { latitude: lat, longitude: lng } = pos.coords;
+        // Reverse geocoding
+        const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+        if (!resGeo.ok) throw new Error('Problem getting location data'); // For the 'catch' part
+        const dataGeo = await resGeo.json();
+        console.log('1 -', resGeo);
+        console.log('2 -', dataGeo);
 
-    // Country data
-    const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
-    // if (!res.ok) throw new Error('Problem getting country');
-    const data = await res.json();
-    console.log('--->', data[0].name);
-    renderCountry(data[0]);
-
-
+        // Country data
+        const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+        if (!res.ok) throw new Error('Problem getting country'); // For the 'catch' part
+        const data = await res.json();
+        console.log('--->', data[0].name);
+        renderCountry(data[0]);
+    } catch (err) {
+        console.log(`There was an ERROR on the whereAmI async function: ${err.message}`);
+        renderError(`Something went wrong! :( ${err.message}`);
+    }
 };
 
+// Calling the function multiple times to generate an error
+whereAmI2();
+whereAmI2();
+whereAmI2();
 whereAmI2();
 console.log('---> FIRST');
-/* ->
----> FIRST
----> Response {type: "cors", url: "https://restcountries.eu/rest/v2/name/australia", redirected: false, status: 200, ok: true, …}
-*/
 
+/* ->
+GET https://geocode.xyz/-35.003994299999995,138.5446135?geoit=json 403
+There was an ERROR on the whereAmI async function: Problem getting location data
+(But the program keeps working on the rest of the code.)
+*/
