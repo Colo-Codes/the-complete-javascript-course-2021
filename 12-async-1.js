@@ -208,11 +208,13 @@ const getCountryData2 = function (country) {
 //     getCountryData('italy');
 // });
 
+/*
 btn.addEventListener('click', function () {
     // getCountryData2('italy');
     // getCountryData2('germany');
     getCountryData2('australia');
 });
+*/
 
 // getCountryData('atlantis'); // Error triggering call
 
@@ -283,3 +285,44 @@ Promise.resolve('abc').then(x => console.log(x));
 // -> abc
 Promise.reject('def').catch(x => console.error(x));
 // -> def
+
+// SECTION Promesifying geolocation
+
+const getPosition = function () {
+    return new Promise(function (resolve, reject) {
+        // navigator.geolocation.getCurrentPosition(
+        //     position => resolve(position),
+        //     err => reject(err)
+        // );
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+};
+
+getPosition().then(pos => console.log(pos));
+// -> ... GeolocationPosition {coords: GeolocationCoordinates, timestamp: 1626654385784}
+
+const whereAmI = function (lat, lng) {
+    getPosition()
+        .then(pos => {
+            const { latitude: lat, longitude: lng } = pos.coords;
+
+            return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+        })
+        .then(response => {
+            return response.json();
+        }, reject => callError(`(2) (${reject})`)) //5.
+        .then(data => {
+            // console.log(data);
+            if (data.error) {
+                callError(`(3) Main reason: ${compoundError} - (${data.error.code}) ${data.error.message || data.error.description}`); //5.
+            } else {
+                // 3.
+                // console.log(data);
+                console.log(`You are in ${data.city}, ${data.country}`);
+                getCountryData2(data.country);
+            }
+        })
+        .catch(err => displayError(err)); // 4.
+}
+
+btn.addEventListener('click', whereAmI);
