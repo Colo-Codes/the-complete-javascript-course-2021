@@ -221,11 +221,65 @@ btn.addEventListener('click', function () {
 console.log('Test start'); // Synchronous code
 setTimeout(() => console.log('0 sec timer'), 0); // On the callback queue
 Promise.resolve('Resolved promise 1').then(res => console.log(res)); // On the microtasks queue (higher priority than callback queue)
+// The problem with microtasks is that, once resolved, they can slow down the callback calls (the time to wait in the setTimeout is not guaranteed):
+// Promise.resolve('Resolve promise 2').then(res => {
+//     for (let i = 0; i < 1000; i++) {
+//         console.log(res);
+//     }
+// });
 console.log('Test end'); // Synchronous code
 /* ->
 Test start
 Test end
 Resolved promise 1
+(1000) Resolve promise 2 // Took a long time
 0 sec timer
 */
 
+// SECTION Building promises
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+    console.log('Lottery draw is happening 🔮');
+    setTimeout(function () {
+        if (Math.random() >= .5) {
+            // Fulfilling the Promise
+            resolve('You WIN 💰!');
+        } else {
+            // Rejecting the Promise
+            reject(new Error('You lost your money 💩...'));
+        }
+    }, 2000);
+});
+
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+/* ->
+Lottery draw is happening 🔮
+...
+Error: You lost your money 💩...
+*/
+
+// Promisifying setTimeout
+const wait = function (seconds) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, seconds * 1000);
+    });
+};
+
+wait(5).then(() => {
+    console.log('I waited for 5 seconds');
+    return wait(3);
+}).then(() => {
+    console.log('I waited for 3 seconds');
+});
+/* ->
+...
+I waited for 5 seconds
+...
+I waited for 3 seconds
+*/
+
+// Resolving a Promise immediately
+Promise.resolve('abc').then(x => console.log(x));
+// -> abc
+Promise.reject('def').catch(x => console.error(x));
+// -> def
