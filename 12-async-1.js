@@ -491,6 +491,41 @@ const renderError = function (msg) {
 
 // SECTION Running Promises in parallel (Promise combinator)
 
+// const getJSON = function (url, errorMsg = 'Something went wrong') {
+//     return fetch(url)
+//         .then(response => {
+//             if (!response.ok)
+//                 throw new Error(`${errorMsg} (${response.status})`);
+//             return response.json();
+//         });
+// };
+
+// // fetch(`https://restcountries.eu/rest/v2/name/${country}`);
+
+
+// const get3Countries = async function (c1, c2, c3) {
+//     try {
+//         // // These three awaits run one after the other, like a three steps waterfall
+//         // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
+//         // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
+//         // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
+//         // console.log([data1.capital, data2.capital, data3.capital]);
+//         // These ones run all in parallel (use the 'Network" tab to inspect)
+//         const data = await Promise.all([getJSON(`https://restcountries.eu/rest/v2/name/${c1}`), getJSON(`https://restcountries.eu/rest/v2/name/${c2}`), getJSON(`https://restcountries.eu/rest/v2/name/${c3}`)]);
+//         console.log(data.map(value => value[0].capital));
+
+
+
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
+
+// get3Countries('spain', 'canada', 'australia');
+// // -> (3) ["Madrid", "Ottawa", "Canberra"]
+
+// SECTION Other promise combinators: race, allSettled, any
+
 const getJSON = function (url, errorMsg = 'Something went wrong') {
     return fetch(url)
         .then(response => {
@@ -500,26 +535,69 @@ const getJSON = function (url, errorMsg = 'Something went wrong') {
         });
 };
 
-// fetch(`https://restcountries.eu/rest/v2/name/${country}`);
+// *** Promise.race()
 
+(async function () {
+    const res = await Promise.race([
+        getJSON(`https://restcountries.eu/rest/v2/name/argentina`),
+        getJSON(`https://restcountries.eu/rest/v2/name/egypt`),
+        getJSON(`https://restcountries.eu/rest/v2/name/mexico`),
+    ]);
+    console.log(res[0].capital);
+    // -> Cairo
+})();
 
-const get3Countries = async function (c1, c2, c3) {
-    try {
-        // // These three awaits run one after the other, like a three steps waterfall
-        // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
-        // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
-        // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
-        // console.log([data1.capital, data2.capital, data3.capital]);
-        // These ones run all in parallel (use the 'Network" tab to inspect)
-        const data = await Promise.all([getJSON(`https://restcountries.eu/rest/v2/name/${c1}`), getJSON(`https://restcountries.eu/rest/v2/name/${c2}`), getJSON(`https://restcountries.eu/rest/v2/name/${c3}`)]);
-        console.log(data.map(value => value[0].capital));
+// Using Promise.race() as a timeout short-circuit for slower user connections
 
+const timeout = function (sec) {
+    return new Promise(function (_, reject) {
+        setTimeout(function () {
+            reject(new Error('Request took too long!'));
+        }, sec * 1000);
+    });
+};
 
+Promise.race([
+    getJSON(`https://restcountries.eu/rest/v2/name/egypt`),
+    timeout(0.5)
+])
+    .then(res => console.log(res[0].capital))
+    .catch(err => console.error(err));
 
-    } catch (err) {
-        console.log(err);
-    }
-}
+// -> Error: Request took too long!
 
-get3Countries('spain', 'canada', 'australia');
-// -> (3) ["Madrid", "Ottawa", "Canberra"]
+// *** Promise.allSettled
+
+Promise.allSettled([
+    Promise.resolve('Success 1'),
+    Promise.reject('Error'),
+    Promise.resolve('Success 2'),
+])
+    .then(res => console.log(`Promise.allSettled(): ${res}`))
+    .catch(err => console.error(`Promise.allSettled(): ${err}`));
+/* ->
+Promise.allSettled(): (3) [{…}, {…}, {…}]
+    0: {status: "fulfilled", value: "Success 1"}
+    1: {status: "rejected", reason: "Error"}
+    2: {status: "fulfilled", value: "Success 2"}
+*/
+Promise.all([
+    Promise.resolve('Success 1'),
+    Promise.reject('Error'),
+    Promise.resolve('Success 2'),
+])
+    .then(res => console.log(`Promise.all(): ${res}`))
+    .catch(err => console.error(`Promise.all(): ${err}`));
+// -> Promise.all(): Error
+
+// *** Promise.any() [ES2021]
+
+Promise.any([
+    Promise.reject('Error 1'),
+    Promise.resolve('Success 1'),
+    Promise.reject('Error 2'),
+    Promise.resolve('Success 2'),
+])
+    .then(res => console.log(`Promise.any(): ${res}`))
+    .catch(err => console.error(`Promise.any(): ${err}`));
+// -> Promise.any(): Success 1
