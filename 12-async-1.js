@@ -372,14 +372,59 @@ const renderError = function (msg) {
 
 // SECTION try...catch
 
-try {
-    const x = 1;
-    x++
-} catch (err) {
-    console.log(`There was an error: ${err.message}`);
-}
-// -> There was an error: Assignment to constant variable.
+// try {
+//     const x = 1;
+//     x++
+// } catch (err) {
+//     console.log(`There was an error: ${err.message}`);
+// }
+// // -> There was an error: Assignment to constant variable.
 
+
+// const getPositionNew = function () {
+//     return new Promise(function (resolve, reject) {
+//         navigator.geolocation.getCurrentPosition(resolve, reject);
+//     });
+// };
+
+// const whereAmI2 = async function () {
+//     try {
+//         // Geolocation
+//         const pos = await getPositionNew();
+//         const { latitude: lat, longitude: lng } = pos.coords;
+//         // Reverse geocoding
+//         const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//         if (!resGeo.ok) throw new Error('Problem getting location data'); // For the 'catch' part
+//         const dataGeo = await resGeo.json();
+//         console.log('1 -', resGeo);
+//         console.log('2 -', dataGeo);
+
+//         // Country data
+//         const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+//         if (!res.ok) throw new Error('Problem getting country'); // For the 'catch' part
+//         const data = await res.json();
+//         console.log('--->', data[0].name);
+//         renderCountry(data[0]);
+//     } catch (err) {
+//         console.log(`There was an ERROR on the whereAmI async function: ${err.message}`);
+//         renderError(`Something went wrong! :( ${err.message}`);
+//     }
+// };
+
+// // Calling the function multiple times to generate an error
+// whereAmI2();
+// whereAmI2();
+// whereAmI2();
+// whereAmI2();
+// console.log('---> FIRST');
+
+// /* ->
+// GET https://geocode.xyz/-35.003994299999995,138.5446135?geoit=json 403
+// There was an ERROR on the whereAmI async function: Problem getting location data
+// (But the program keeps working on the rest of the code.)
+// */
+
+// SECTION Returning values from an async function (try...catch throw)
 
 const getPositionNew = function () {
     return new Promise(function (resolve, reject) {
@@ -396,30 +441,50 @@ const whereAmI2 = async function () {
         const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
         if (!resGeo.ok) throw new Error('Problem getting location data'); // For the 'catch' part
         const dataGeo = await resGeo.json();
-        console.log('1 -', resGeo);
-        console.log('2 -', dataGeo);
 
         // Country data
         const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
         if (!res.ok) throw new Error('Problem getting country'); // For the 'catch' part
         const data = await res.json();
-        console.log('--->', data[0].name);
         renderCountry(data[0]);
+
+        // returning a value
+        return `You are in ${dataGeo.city}, ${dataGeo.country}`;
     } catch (err) {
         console.log(`There was an ERROR on the whereAmI async function: ${err.message}`);
         renderError(`Something went wrong! :( ${err.message}`);
+
+        // Reject promise returned from async function so we can use a 'catch' later on
+        throw err;
     }
 };
 
-// Calling the function multiple times to generate an error
-whereAmI2();
-whereAmI2();
-whereAmI2();
-whereAmI2();
-console.log('---> FIRST');
+console.log('1: Will get location');
+// // console.log(whereAmI2()); // Doing this, will return a promise (due to the nature of the async function)
+// // // -> Promise {<pending>}
+// whereAmI2()
+//     .then(city => console.log(`2: ${city}`))
+//     .catch(err => console.log(`2: ${err.message}`))
+//     .finally(() => console.log(`3: End of async function execution`));
+// console.log('4: Finished getting location?');
+// /* ->
+// 1: Will get location
+// 4: Finished getting location?
+// 2: You are in OAKLANDS PARK, Australia (or 2: Problem getting location data)
+// 3: End of async function execution
+// */
 
-/* ->
-GET https://geocode.xyz/-35.003994299999995,138.5446135?geoit=json 403
-There was an ERROR on the whereAmI async function: Problem getting location data
-(But the program keeps working on the rest of the code.)
-*/
+// Using IIFE functions to create an async version of the above code
+(async function () {
+    try {
+        const location = await whereAmI2();
+        console.log(`2: ${location}`);
+    } catch (err) {
+        console.log(`2: ${err}`);
+        throw err;
+    }
+    console.log(`3: End of async function execution`);
+})();
+console.log('4: Finished getting location?');
+
+// If there is no error thrown on the 'catch' block, the async function will get fulfilled, even though there was an error in the 'try' block. This is why this 'catch' will be 'undefined': whereAmI2().then(city => console.log(city)).catch(err => console.error(${err})).
