@@ -426,65 +426,100 @@ const renderError = function (msg) {
 
 // SECTION Returning values from an async function (try...catch throw)
 
-const getPositionNew = function () {
-    return new Promise(function (resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-};
+// const getPositionNew = function () {
+//     return new Promise(function (resolve, reject) {
+//         navigator.geolocation.getCurrentPosition(resolve, reject);
+//     });
+// };
 
-const whereAmI2 = async function () {
-    try {
-        // Geolocation
-        const pos = await getPositionNew();
-        const { latitude: lat, longitude: lng } = pos.coords;
-        // Reverse geocoding
-        const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
-        if (!resGeo.ok) throw new Error('Problem getting location data'); // For the 'catch' part
-        const dataGeo = await resGeo.json();
+// const whereAmI2 = async function () {
+//     try {
+//         // Geolocation
+//         const pos = await getPositionNew();
+//         const { latitude: lat, longitude: lng } = pos.coords;
+//         // Reverse geocoding
+//         const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//         if (!resGeo.ok) throw new Error('Problem getting location data'); // For the 'catch' part
+//         const dataGeo = await resGeo.json();
 
-        // Country data
-        const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
-        if (!res.ok) throw new Error('Problem getting country'); // For the 'catch' part
-        const data = await res.json();
-        renderCountry(data[0]);
+//         // Country data
+//         const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+//         if (!res.ok) throw new Error('Problem getting country'); // For the 'catch' part
+//         const data = await res.json();
+//         renderCountry(data[0]);
 
-        // returning a value
-        return `You are in ${dataGeo.city}, ${dataGeo.country}`;
-    } catch (err) {
-        console.log(`There was an ERROR on the whereAmI async function: ${err.message}`);
-        renderError(`Something went wrong! :( ${err.message}`);
+//         // returning a value
+//         return `You are in ${dataGeo.city}, ${dataGeo.country}`;
+//     } catch (err) {
+//         console.log(`There was an ERROR on the whereAmI async function: ${err.message}`);
+//         renderError(`Something went wrong! :( ${err.message}`);
 
-        // Reject promise returned from async function so we can use a 'catch' later on
-        throw err;
-    }
-};
+//         // Reject promise returned from async function so we can use a 'catch' later on
+//         throw err;
+//     }
+// };
 
-console.log('1: Will get location');
-// // console.log(whereAmI2()); // Doing this, will return a promise (due to the nature of the async function)
-// // // -> Promise {<pending>}
-// whereAmI2()
-//     .then(city => console.log(`2: ${city}`))
-//     .catch(err => console.log(`2: ${err.message}`))
-//     .finally(() => console.log(`3: End of async function execution`));
+// console.log('1: Will get location');
+// // // console.log(whereAmI2()); // Doing this, will return a promise (due to the nature of the async function)
+// // // // -> Promise {<pending>}
+// // whereAmI2()
+// //     .then(city => console.log(`2: ${city}`))
+// //     .catch(err => console.log(`2: ${err.message}`))
+// //     .finally(() => console.log(`3: End of async function execution`));
+// // console.log('4: Finished getting location?');
+// // /* ->
+// // 1: Will get location
+// // 4: Finished getting location?
+// // 2: You are in OAKLANDS PARK, Australia (or 2: Problem getting location data)
+// // 3: End of async function execution
+// // */
+
+// // Using IIFE functions to create an async version of the above code
+// (async function () {
+//     try {
+//         const location = await whereAmI2();
+//         console.log(`2: ${location}`);
+//     } catch (err) {
+//         console.log(`2: ${err}`);
+//         throw err;
+//     }
+//     console.log(`3: End of async function execution`);
+// })();
 // console.log('4: Finished getting location?');
-// /* ->
-// 1: Will get location
-// 4: Finished getting location?
-// 2: You are in OAKLANDS PARK, Australia (or 2: Problem getting location data)
-// 3: End of async function execution
-// */
 
-// Using IIFE functions to create an async version of the above code
-(async function () {
+// // If there is no error thrown on the 'catch' block, the async function will get fulfilled, even though there was an error in the 'try' block. This is why this 'catch' will be 'undefined': whereAmI2().then(city => console.log(city)).catch(err => console.error(${err})).
+
+// SECTION Running Promises in parallel (Promise combinator)
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+    return fetch(url)
+        .then(response => {
+            if (!response.ok)
+                throw new Error(`${errorMsg} (${response.status})`);
+            return response.json();
+        });
+};
+
+// fetch(`https://restcountries.eu/rest/v2/name/${country}`);
+
+
+const get3Countries = async function (c1, c2, c3) {
     try {
-        const location = await whereAmI2();
-        console.log(`2: ${location}`);
-    } catch (err) {
-        console.log(`2: ${err}`);
-        throw err;
-    }
-    console.log(`3: End of async function execution`);
-})();
-console.log('4: Finished getting location?');
+        // // These three awaits run one after the other, like a three steps waterfall
+        // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
+        // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
+        // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
+        // console.log([data1.capital, data2.capital, data3.capital]);
+        // These ones run all in parallel (use the 'Network" tab to inspect)
+        const data = await Promise.all([getJSON(`https://restcountries.eu/rest/v2/name/${c1}`), getJSON(`https://restcountries.eu/rest/v2/name/${c2}`), getJSON(`https://restcountries.eu/rest/v2/name/${c3}`)]);
+        console.log(data.map(value => value[0].capital));
 
-// If there is no error thrown on the 'catch' block, the async function will get fulfilled, even though there was an error in the 'try' block. This is why this 'catch' will be 'undefined': whereAmI2().then(city => console.log(city)).catch(err => console.error(${err})).
+
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+get3Countries('spain', 'canada', 'australia');
+// -> (3) ["Madrid", "Ottawa", "Canberra"]
