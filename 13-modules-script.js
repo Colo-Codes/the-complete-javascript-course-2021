@@ -1,32 +1,80 @@
 // SECTION Modules: import and export
 
-// Importing module
-console.log('Importing module');
-import { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js';
+// // Importing module
+// console.log('Importing module');
+// import { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js';
 
-// NOTE Importing everything as an object
-import * as ShoppingCart from './13-modules-shoppingCart.js';
+// // NOTE Importing everything as an object
+// import * as ShoppingCart from './13-modules-shoppingCart.js';
 
-addToCart('bread', 5);
+// addToCart('bread', 5);
 
-console.log(price, tq);
-console.log(ShoppingCart);
+// console.log(price, tq);
+// console.log(ShoppingCart);
 
-ShoppingCart.addToCart('lettuce', 2);
+// ShoppingCart.addToCart('lettuce', 2);
 
-// import add, { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js'; // Mixing named and default exports on imports is not a good practice
-import add from './13-modules-shoppingCart.js';
-import { cart } from './13-modules-shoppingCart.js'; // Initially, the cart is empty
+// // import add, { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js'; // Mixing named and default exports on imports is not a good practice
+// import add from './13-modules-shoppingCart.js';
+// import { cart } from './13-modules-shoppingCart.js'; // Initially, the cart is empty
 
-add('apple', 5); // The cart gets updated due to the 'live connection' between exports and imports
-add('peanuts', 15);
-add('cake', 1);
-console.log(cart);
+// add('apple', 5); // The cart gets updated due to the 'live connection' between exports and imports
+// add('peanuts', 15);
+// add('cake', 1);
+// console.log(cart);
+// /* ->
+// (5) [{…}, {…}, {…}, {…}, {…}]
+//     0: {product: "bread", quantity: 5}
+//     1: {product: "lettuce", quantity: 2}
+//     2: {product: "apple", quantity: 5}
+//     3: {product: "peanuts", quantity: 15}
+//     4: {product: "cake", quantity: 1}
+// */
+
+// SECTION Modules: module pattern (using IIFE functions)
+
+// Used before ES6 and in some special cases after ES6
+
+// Using an IIFE
+const ShoppingCart2 = (function () {
+    const cart = [];
+    const shippingCost = 10;
+    const totalPrice = 237;
+    const totalQuantity = 23;
+
+    const addToCart = function (product, quantity) {
+        cart.push({ product, quantity });
+        console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`); // NOTE Thanks to closures, the addToCart method of the ShoppingCart2 object will have access to the shippingCost variable.
+    };
+
+    const orderStock = function (product, quantity) {
+        console.log(`${quantity} ${product} ordered from supplier`);
+    };
+
+    // This is the 'public API'
+    return {
+        addToCart,
+        cart,
+        totalPrice,
+        totalQuantity
+    }
+})();
+
+ShoppingCart2.addToCart('apple', 4);
+ShoppingCart2.addToCart('egg', 5);
 /* ->
-(5) [{…}, {…}, {…}, {…}, {…}]
-    0: {product: "bread", quantity: 5}
-    1: {product: "lettuce", quantity: 2}
-    2: {product: "apple", quantity: 5}
-    3: {product: "peanuts", quantity: 15}
-    4: {product: "cake", quantity: 1}
+4 apple was added to cart
+5 egg was added to cart
 */
+console.log(ShoppingCart2);
+/* ->
+{cart: Array(2), totalPrice: 237, totalQuantity: 23, addToCart: ƒ}
+    addToCart: ƒ (product, quantity)
+    cart: (2) [{…}, {…}]
+    totalPrice: 237
+    totalQuantity: 23
+*/
+console.log(ShoppingCart2.shippingCost); // NOTE What wasn't exported is not accessible
+// -> undefined
+console.log(ShoppingCart2.totalPrice);
+// -> 237
