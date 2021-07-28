@@ -33,48 +33,60 @@
 
 // SECTION Modules: module pattern (using IIFE functions)
 
-// Used before ES6 and in some special cases after ES6
+// // Used before ES6 and in some special cases after ES6
 
-// Using an IIFE
-const ShoppingCart2 = (function () {
-    const cart = [];
-    const shippingCost = 10;
-    const totalPrice = 237;
-    const totalQuantity = 23;
+// // Using an IIFE
+// const ShoppingCart2 = (function () {
+//     const cart = [];
+//     const shippingCost = 10;
+//     const totalPrice = 237;
+//     const totalQuantity = 23;
 
-    const addToCart = function (product, quantity) {
-        cart.push({ product, quantity });
-        console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`); // NOTE Thanks to closures, the addToCart method of the ShoppingCart2 object will have access to the shippingCost variable.
-    };
+//     const addToCart = function (product, quantity) {
+//         cart.push({ product, quantity });
+//         console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`); // NOTE Thanks to closures, the addToCart method of the ShoppingCart2 object will have access to the shippingCost variable.
+//     };
 
-    const orderStock = function (product, quantity) {
-        console.log(`${quantity} ${product} ordered from supplier`);
-    };
+//     const orderStock = function (product, quantity) {
+//         console.log(`${quantity} ${product} ordered from supplier`);
+//     };
 
-    // This is the 'public API'
-    return {
-        addToCart,
-        cart,
-        totalPrice,
-        totalQuantity
-    }
-})();
+//     // This is the 'public API'
+//     return {
+//         addToCart,
+//         cart,
+//         totalPrice,
+//         totalQuantity
+//     }
+// })();
 
-ShoppingCart2.addToCart('apple', 4);
-ShoppingCart2.addToCart('egg', 5);
-/* ->
-4 apple was added to cart
-5 egg was added to cart
-*/
-console.log(ShoppingCart2);
-/* ->
-{cart: Array(2), totalPrice: 237, totalQuantity: 23, addToCart: ƒ}
-    addToCart: ƒ (product, quantity)
-    cart: (2) [{…}, {…}]
-    totalPrice: 237
-    totalQuantity: 23
-*/
-console.log(ShoppingCart2.shippingCost); // NOTE What wasn't exported is not accessible
-// -> undefined
-console.log(ShoppingCart2.totalPrice);
-// -> 237
+// ShoppingCart2.addToCart('apple', 4);
+// ShoppingCart2.addToCart('egg', 5);
+// /* ->
+// 4 apple was added to cart
+// 5 egg was added to cart
+// */
+// console.log(ShoppingCart2);
+// /* ->
+// {cart: Array(2), totalPrice: 237, totalQuantity: 23, addToCart: ƒ}
+//     addToCart: ƒ (product, quantity)
+//     cart: (2) [{…}, {…}]
+//     totalPrice: 237
+//     totalQuantity: 23
+// */
+// console.log(ShoppingCart2.shippingCost); // NOTE What wasn't exported is not accessible
+// // -> undefined
+// console.log(ShoppingCart2.totalPrice);
+// // -> 237
+
+// SECTION CommonJS Modules
+
+// Export (it will not work on the browser, but it will work on NodeJS)
+export.addToCart = function (product, quantity) {
+    cart.push({ product, quantity });
+    console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`);
+};
+
+// Import (it will not work on the browser, but it will work on NodeJS)
+const { addToCart } = require('./13-modules-shoppingCart.js');
+
