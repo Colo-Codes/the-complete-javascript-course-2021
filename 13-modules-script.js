@@ -81,12 +81,35 @@
 
 // SECTION CommonJS Modules
 
-// Export (it will not work on the browser, but it will work on NodeJS)
-export.addToCart = function (product, quantity) {
-    cart.push({ product, quantity });
-    console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`);
-};
+// // Export (it will not work on the browser, but it will work on NodeJS)
+// export.addToCart = function (product, quantity) {
+//     cart.push({ product, quantity });
+//     console.log(`${quantity} ${product} was added to cart, shipping cost is ${shippingCost}`);
+// };
 
-// Import (it will not work on the browser, but it will work on NodeJS)
-const { addToCart } = require('./13-modules-shoppingCart.js');
+// // Import (it will not work on the browser, but it will work on NodeJS)
+// const { addToCart } = require('./13-modules-shoppingCart.js');
+
+// SECTION Working with lodash modules and npm
+
+import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+
+const state = {
+    cart: [
+        { product: 'bread', quantity: 5 },
+        { product: 'apple', quantity: 4 }
+    ],
+    user: { loggedIn: true }
+}
+
+const stateClone = Object.assign({}, state);
+state.user.loggedIn = false;
+console.log(stateClone.user.loggedIn);
+// -> false // Because 'stateClone' is not an actual copy, just a reference to the original object 'state'
+
+state.user.loggedIn = true; // Back to initial state
+const stateDeepClone = cloneDeep(state);
+state.user.loggedIn = false;
+console.log(stateDeepClone.user.loggedIn);
+// -> true // Now 'stateDeepClone' is an actual copy of the 'state' object
 
