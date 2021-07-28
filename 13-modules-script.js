@@ -1,35 +1,35 @@
 // SECTION Modules: import and export
 
-// // Importing module
-// console.log('Importing module');
-// import { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js';
+// Importing module
+console.log('Importing module');
+import { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js';
 
-// // NOTE Importing everything as an object
-// import * as ShoppingCart from './13-modules-shoppingCart.js';
+// NOTE Importing everything as an object
+import * as ShoppingCart from './13-modules-shoppingCart.js';
 
-// addToCart('bread', 5);
+addToCart('bread', 5);
 
-// console.log(price, tq);
-// console.log(ShoppingCart);
+console.log(price, tq);
+console.log(ShoppingCart);
 
-// ShoppingCart.addToCart('lettuce', 2);
+ShoppingCart.addToCart('lettuce', 2);
 
-// // import add, { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js'; // Mixing named and default exports on imports is not a good practice
-// import add from './13-modules-shoppingCart.js';
-// import { cart } from './13-modules-shoppingCart.js'; // Initially, the cart is empty
+// import add, { addToCart, totalPrice as price, tq } from './13-modules-shoppingCart.js'; // Mixing named and default exports on imports is not a good practice
+import add from './13-modules-shoppingCart.js';
+import { cart } from './13-modules-shoppingCart.js'; // Initially, the cart is empty
 
-// add('apple', 5); // The cart gets updated due to the 'live connection' between exports and imports
-// add('peanuts', 15);
-// add('cake', 1);
-// console.log(cart);
-// /* ->
-// (5) [{…}, {…}, {…}, {…}, {…}]
-//     0: {product: "bread", quantity: 5}
-//     1: {product: "lettuce", quantity: 2}
-//     2: {product: "apple", quantity: 5}
-//     3: {product: "peanuts", quantity: 15}
-//     4: {product: "cake", quantity: 1}
-// */
+add('apple', 5); // The cart gets updated due to the 'live connection' between exports and imports
+add('peanuts', 15);
+add('cake', 1);
+console.log(cart);
+/* ->
+(5) [{…}, {…}, {…}, {…}, {…}]
+    0: {product: "bread", quantity: 5}
+    1: {product: "lettuce", quantity: 2}
+    2: {product: "apple", quantity: 5}
+    3: {product: "peanuts", quantity: 15}
+    4: {product: "cake", quantity: 1}
+*/
 
 // SECTION Modules: module pattern (using IIFE functions)
 
@@ -93,6 +93,7 @@
 // SECTION Working with lodash modules and npm
 
 import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+// import cloneDeep from 'lodash-es'; // If we are using Parcel, we could import like this (and it can also install new CommonJS modules on the fly) (WARNING This doesn't work as of 28/07/2021)
 
 const state = {
     cart: [
@@ -113,3 +114,22 @@ state.user.loggedIn = false;
 console.log(stateDeepClone.user.loggedIn);
 // -> true // Now 'stateDeepClone' is an actual copy of the 'state' object
 
+if (module.hot) {
+    module.hot.accept();
+}
+
+let i = 0;
+i++
+console.log(i);
+
+class Person {
+    #greeting = 'Hey';
+    constructor(name) {
+        this.name = name;
+        console.log(`${this.#greeting}, ${this.name}`);
+    }
+}
+
+const Damian = new Person('Damian');
+
+// SECTION Polyfill

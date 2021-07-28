@@ -2,8 +2,10 @@
     "name": "the-complete-javascript-course-2021",
     "version": "1.0.0",
     "description": "A course by Jonas Schmedtmann on Udemy",
-    "main": "00-helloWorld.js",
+    "main": "13-modules-index.html",
     "scripts": {
+        "start": "parcel 13-modules-index.html",
+        "build": "parcel build 13-modules-index.html",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -19,5 +21,8 @@
     "dependencies": {
         "leaflet": "^1.7.1",
         "lodash-es": "^4.17.21"
+    },
+    "devDependencies": {
+        "parcel": "^2.0.0-beta.2"
     }
 }

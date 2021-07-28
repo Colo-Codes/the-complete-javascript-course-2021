@@ -1,0 +1,36 @@
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+_parcelHelpers.export(exports, "cart", function () {
+  return cart;
+});
+_parcelHelpers.export(exports, "addToCart", function () {
+  return addToCart;
+});
+_parcelHelpers.export(exports, "totalPrice", function () {
+  return totalPrice;
+});
+_parcelHelpers.export(exports, "tq", function () {
+  return totalQuantity;
+});
+// Exporting module
+console.log('Exporting module');
+// In modules, variables defined at top level scope are local to the module, not global (can't be used on other modules importing this module).
+const shippingCost = 10;
+const cart = [];
+const addToCart = function (product, quantity) {
+  cart.push({
+    product,
+    quantity
+  });
+  console.log(`${quantity} ${product} was added to cart`);
+};
+const totalPrice = 237;
+const totalQuantity = 23;
+exports.default = function (product, quantity) {
+  cart.push({
+    product,
+    quantity
+  });
+  console.log(`${quantity} ${product} was added to cart`);
+};
+;

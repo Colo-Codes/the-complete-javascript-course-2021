@@ -1,0 +1,47 @@
+var _modulesShoppingCartJs = require('./13-modules-shoppingCart.js');
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+var _modulesShoppingCartJsDefault = _parcelHelpers.interopDefault(_modulesShoppingCartJs);
+var _modulesShoppingCartJsDefault = _parcelHelpers.interopDefault(_modulesShoppingCartJs);
+var _modulesShoppingCartJsDefault = _parcelHelpers.interopDefault(_modulesShoppingCartJs);
+var _modulesShoppingCartJsDefault = _parcelHelpers.interopDefault(_modulesShoppingCartJs);
+var _node_modulesLodashEsCloneDeepJs = require('./node_modules/lodash-es/cloneDeep.js');
+var _node_modulesLodashEsCloneDeepJsDefault = _parcelHelpers.interopDefault(_node_modulesLodashEsCloneDeepJs);
+// SECTION Modules: import and export
+// Importing module
+console.log('Importing module');
+_modulesShoppingCartJs.addToCart('bread', 5);
+console.log(_modulesShoppingCartJs.totalPrice, _modulesShoppingCartJs.tq);
+console.log(_modulesShoppingCartJs);
+_modulesShoppingCartJs.addToCart('lettuce', 2);
+// Initially, the cart is empty
+_modulesShoppingCartJsDefault.default('apple', 5);
+// The cart gets updated due to the 'live connection' between exports and imports
+_modulesShoppingCartJsDefault.default('peanuts', 15);
+_modulesShoppingCartJsDefault.default('cake', 1);
+console.log(_modulesShoppingCartJs.cart);
+// import cloneDeep from 'lodash-es'; // If we are using Parcel, we could import like this (and it can also install new CommonJS modules on the fly)
+const state = {
+  cart: [{
+    product: 'bread',
+    quantity: 5
+  }, {
+    product: 'apple',
+    quantity: 4
+  }],
+  user: {
+    loggedIn: true
+  }
+};
+const stateClone = Object.assign({}, state);
+state.user.loggedIn = false;
+console.log(stateClone.user.loggedIn);
+// -> false // Because 'stateClone' is not an actual copy, just a reference to the original object 'state'
+state.user.loggedIn = true;
+// Back to initial state
+const stateDeepClone = _node_modulesLodashEsCloneDeepJsDefault.default(state);
+state.user.loggedIn = false;
+console.log(stateDeepClone.user.loggedIn);
+// -> true // Now 'stateDeepClone' is an actual copy of the 'state' object
+if (module.hot) {
+  module.hot.accept();
+}
