@@ -133,3 +133,12 @@ class Person {
 const Damian = new Person('Damian');
 
 // SECTION Polyfill
+
+// Import everything
+import 'core-js/stable';
+
+// Import just one module
+import 'core-js/stable/array/concat';
+
+// Polyfilling async functions
+import 'regenerator-runtime/runtime';
