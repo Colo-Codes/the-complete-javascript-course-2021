@@ -468,7 +468,10 @@ const controlRecipes = async function () {
 
     if (!id) return;
 
-    _recipeView.default.renderSpinner(); // 1) Loading recipe
+    _recipeView.default.renderSpinner(); // 0) Update resilts view to mark selected search results
+
+
+    _resultsView.default.update(model.getSearchResultsPage()); // 1) Loading recipe
 
 
     await model.loadRecipe(id); // 2) Rendering recipe
@@ -512,8 +515,9 @@ const controlPagination = function (goToPage) {
 const controlServings = function (newServings) {
   // Update recipe servings (in state)
   model.updateServings(newServings); // Update recipe view
+  // recipeView.render(model.state.recipe);
 
-  _recipeView.default.render(model.state.recipe);
+  _recipeView.default.update(model.state.recipe);
 };
 
 const init = function () {
@@ -2960,6 +2964,34 @@ class View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  update(data) {
+    // Instead of rendering the whole page, just change the values on the elements that are different
+    this._data = data;
+
+    const newMarkup = this._generateMarkup();
+
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const currentElements = Array.from(this._parentElement.querySelectorAll('*'));
+    newElements.forEach((newEl, i) => {
+      var _newEl$firstChild;
+
+      const curEl = currentElements[i]; // console.log(curEl, newEl.isEqualNode(curEl));
+      // Updates changed 'text'
+
+      if (!newEl.isEqualNode(curEl) && ((_newEl$firstChild = newEl.firstChild) === null || _newEl$firstChild === void 0 ? void 0 : _newEl$firstChild.nodeValue.trim()) !== '') {
+        curEl.textContent = newEl.textContent;
+      } // Updates changed 'attributes'
+
+
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => {
+          curEl.setAttribute(attr.name, attr.value);
+        });
+      }
+    });
+  }
+
   _clear() {
     this._parentElement.innerHTML = '';
   }
@@ -3090,9 +3122,10 @@ class ResultsView extends _View.default {
   }
 
   _generateMarkupPreview(result) {
+    const id = window.location.hash.slice(1);
     return `
         <li class="preview">
-            <a class="preview__link" href="#${result.id}">
+            <a class="preview__link ${id === result.id ? 'preview__link--active' : ''}" href="#${result.id}">
               <figure class="preview__fig">
                 <img src="${result.image}" alt="${result.title}est" />
               </figure>
@@ -3149,8 +3182,7 @@ class PaginationView extends _View.default {
 
   _generateMarkup() {
     const currentPage = this._data.page;
-    const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-    console.log(numPages); // Page 1, and there are other pages
+    const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage); // Page 1, and there are other pages
 
     if (currentPage === 1 && numPages > 1) {
       return `
