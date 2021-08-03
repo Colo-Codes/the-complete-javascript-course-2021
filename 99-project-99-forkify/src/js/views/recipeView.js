@@ -8,9 +8,21 @@ class RecipeView extends View {
   _errorMessage = 'We could not find that recipe. Please, try another one!';
   _message = '';
 
+  // Publisher (listens for an event)
   addHandlerRender(handler) {
-    // Publisher (listens for an event)
     ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+  }
+
+  // Publisher
+  addHandlerUpdateServings(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--update-servings');
+      if (!btn) return;
+      // const updateTo = +btn.dataset.updateTo; // To Number
+      const { updateTo } = btn.dataset; // To Number
+      if (+updateTo < 1) return;
+      handler(+updateTo);
+    });
   }
 
   _generateMarkup() {
@@ -41,12 +53,12 @@ class RecipeView extends View {
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
                 <svg>
                   <use href="${icons}#icon-minus-circle"></use>
                 </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
                 <svg>
                   <use href="${icons}#icon-plus-circle"></use>
                 </svg>
