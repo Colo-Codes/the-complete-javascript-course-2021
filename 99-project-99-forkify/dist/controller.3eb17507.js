@@ -470,10 +470,11 @@ const controlRecipes = async function () {
 
     if (!id) return;
 
-    _recipeView.default.renderSpinner(); // 0) Update results view to mark selected search and bookmarked results
+    _recipeView.default.renderSpinner(); // 0) Update results view to mark selected search and bookmark results
 
 
-    _resultsView.default.update(model.getSearchResultsPage());
+    _resultsView.default.update(model.getSearchResultsPage()); // debugger; // Creates a breakpoint
+
 
     _bookmarksView.default.update(model.state.bookmarks); // 1) Loading recipe
 
@@ -484,6 +485,8 @@ const controlRecipes = async function () {
   } catch (err) {
     // Handling errors
     _recipeView.default.renderError();
+
+    console.error(err);
   }
 };
 
@@ -504,7 +507,7 @@ const controlSearchResults = async function () {
 
     _paginationView.default.render(model.state.search);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
@@ -534,8 +537,14 @@ const controlToggleBookmark = function () {
   _bookmarksView.default.render(model.state.bookmarks);
 };
 
+const controlBookmarks = function () {
+  _bookmarksView.default.render(model.state.bookmarks);
+};
+
 const init = function () {
   // Subscribers (handles the event)
+  _bookmarksView.default.addHandlerRender(controlBookmarks);
+
   _recipeView.default.addHandlerRender(controlRecipes);
 
   _recipeView.default.addHandlerUpdateServings(controlServings);
@@ -1484,7 +1493,6 @@ const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
     const data = await (0, _helpers.getJSON)(`${_config.API_URL}?search=${query}`);
-    console.log(data);
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
@@ -1523,11 +1531,16 @@ const updateServings = function (newServings) {
 
 exports.updateServings = updateServings;
 
+const persistBookmarks = function () {
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+
 const addBookmark = function (recipe) {
   // Add bookmark
   state.bookmarks.push(recipe); // Mark current recipe as bookmarked
 
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+  persistBookmarks();
 };
 
 exports.addBookmark = addBookmark;
@@ -1538,9 +1551,21 @@ const removeBookmark = function (id) {
   state.bookmarks.splice(index, 1); // Mark current recipe as not bookmarked
 
   if (id === state.recipe.id) state.recipe.bookmarked = false;
+  persistBookmarks();
 };
 
 exports.removeBookmark = removeBookmark;
+
+const init = function () {
+  const storage = localStorage.getItem('bookmarks');
+  if (storage) state.bookmarks = JSON.parse(storage);
+};
+
+init(); // For debugging purposes
+
+const clearBookmarks = function () {
+  localStorage.clear('bookmarks');
+}; // clearBookmarks();
 },{"regenerator-runtime/runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de","./helpers.js":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -3339,8 +3364,12 @@ class BookmarksView extends _View.default {
     _defineProperty(this, "_message", '');
   }
 
+  // Render bookmarks at load to prevent update from local storage errors
+  addHandlerRender(handler) {
+    window.addEventListener('load', handler);
+  }
+
   _generateMarkup() {
-    console.log(this._data);
     return this._data.map(bookmark => _previewView.default.render(bookmark, false)).join('');
   }
 
