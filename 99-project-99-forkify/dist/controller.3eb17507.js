@@ -441,6 +441,8 @@ require("core-js/modules/web.immediate.js");
 
 var model = _interopRequireWildcard(require("./model.js"));
 
+var _config = require("./config.js");
+
 var _recipeView = _interopRequireDefault(require("./views/recipeView.js"));
 
 var _searchView = _interopRequireDefault(require("./views/searchView.js"));
@@ -450,6 +452,8 @@ var _resultsView = _interopRequireDefault(require("./views/resultsView.js"));
 var _paginationView = _interopRequireDefault(require("./views/paginationView.js"));
 
 var _bookmarksView = _interopRequireDefault(require("./views/bookmarksView.js"));
+
+var _addRecipeView = _interopRequireDefault(require("./views/addRecipeView.js"));
 
 var _runtime = require("regenerator-runtime/runtime");
 
@@ -541,6 +545,36 @@ const controlBookmarks = function () {
   _bookmarksView.default.render(model.state.bookmarks);
 };
 
+const controlAddRecipe = async function (newRecipe) {
+  try {
+    // Show loading spinned
+    _addRecipeView.default.renderSpinner(); // Upload the new recipe data
+
+
+    await model.uploadRecipe(newRecipe);
+    console.log('🐙', model.state.recipe); // Render recipe
+
+    _recipeView.default.render(model.state.recipe); // Success message
+
+
+    _addRecipeView.default.renderMessage(); // Render bookmark view
+
+
+    _bookmarksView.default.render(model.state.bookmarks); // Change ID in URL
+
+
+    window.history.pushState(null, '', `#${model.state.recipe.id}`); // Close form modal window
+
+    setTimeout(function () {
+      _addRecipeView.default.toggleWindow();
+    }, _config.MODAL_CLOSE_SEC * 1000);
+  } catch (err) {
+    console.error('🔥', err);
+
+    _addRecipeView.default.renderError(err.message);
+  }
+};
+
 const init = function () {
   // Subscribers (handles the event)
   _bookmarksView.default.addHandlerRender(controlBookmarks);
@@ -554,10 +588,12 @@ const init = function () {
   _searchView.default.addHandlerSearch(controlSearchResults);
 
   _paginationView.default.addHandlerClick(controlPagination);
+
+  _addRecipeView.default.addHandlerUpload(controlAddRecipe);
 };
 
 init();
-},{"core-js/modules/web.immediate.js":"140df4f8e97a45c53c66fead1f5a9e92","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","regenerator-runtime/runtime":"e155e0d3930b156f86c48e8d05522b16","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773","./views/paginationView.js":"d2063f3e7de2e4cdacfcb5eb6479db05","./views/bookmarksView.js":"7ed9311e216aa789713f70ebeec3ed40"}],"140df4f8e97a45c53c66fead1f5a9e92":[function(require,module,exports) {
+},{"core-js/modules/web.immediate.js":"140df4f8e97a45c53c66fead1f5a9e92","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","regenerator-runtime/runtime":"e155e0d3930b156f86c48e8d05522b16","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773","./views/paginationView.js":"d2063f3e7de2e4cdacfcb5eb6479db05","./views/bookmarksView.js":"7ed9311e216aa789713f70ebeec3ed40","./views/addRecipeView.js":"4dd83c2a08c1751220d223c54dc70016","./config.js":"09212d541c5c40ff2bd93475a904f8de"}],"140df4f8e97a45c53c66fead1f5a9e92":[function(require,module,exports) {
 var $ = require('../internals/export');
 
 var global = require('../internals/global');
@@ -1441,7 +1477,7 @@ module.exports = classof(global.process) == 'process';
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.removeBookmark = exports.addBookmark = exports.updateServings = exports.getSearchResultsPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
+exports.uploadRecipe = exports.removeBookmark = exports.addBookmark = exports.updateServings = exports.getSearchResultsPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
 
 var _runtime = require("regenerator-runtime/runtime");
 
@@ -1449,6 +1485,7 @@ var _config = require("./config.js");
 
 var _helpers = require("./helpers.js");
 
+// import { getJSON, sendJSON } from './helpers.js';
 // As per Architecture diagram
 const state = {
   recipe: {},
@@ -1462,23 +1499,31 @@ const state = {
 };
 exports.state = state;
 
+const createRecipeObject = function (data) {
+  // let recipe = data.data.recipe
+  const {
+    recipe
+  } = data.data;
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    sourceUrl: recipe.source_url,
+    image: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    ...(recipe.key && {
+      key: recipe.key
+    }) // Nice trick to create a property only if a value (recipe.key) exists
+
+  };
+};
+
 const loadRecipe = async function (id) {
   try {
-    const data = await (0, _helpers.getJSON)(`${_config.API_URL}${id}`); // let recipe = data.data.recipe
-
-    const {
-      recipe
-    } = data.data;
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients
-    };
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}${id}?key=${_config.KEY}`);
+    state.recipe = createRecipeObject(data);
     if (state.bookmarks.some(bookmark => bookmark.id === id)) state.recipe.bookmarked = true;else state.recipe.bookmarked = false;
   } catch (err) {
     // Temp error handling
@@ -1492,13 +1537,17 @@ exports.loadRecipe = loadRecipe;
 const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await (0, _helpers.getJSON)(`${_config.API_URL}?search=${query}`);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?search=${query}&key=${_config.KEY}`);
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
         title: rec.title,
         publisher: rec.publisher,
-        image: rec.image_url
+        image: rec.image_url,
+        ...(rec.key && {
+          key: rec.key
+        }) // Nice trick to create a property only if a value (rec.key) exists
+
       };
     }); // Clear previous pagination
 
@@ -1566,6 +1615,40 @@ init(); // For debugging purposes
 const clearBookmarks = function () {
   localStorage.clear('bookmarks');
 }; // clearBookmarks();
+
+
+const uploadRecipe = async function (newRecipe) {
+  try {
+    const ingredients = Object.entries(newRecipe).filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '').map(ing => {
+      // const ingArr = ing[1].replaceAll(' ', '').split(',');
+      const ingArr = ing[1].split(',').map(el => el.trim());
+      const [quantity, unit, description] = ingArr;
+      if (ingArr.length !== 3) throw new Error('Wrong ingredient format!');
+      return {
+        quantity: quantity ? +quantity : null,
+        unit,
+        description
+      };
+    });
+    const recipe = {
+      title: newRecipe.title,
+      source_url: newRecipe.sourceUrl,
+      image_url: newRecipe.image,
+      publisher: newRecipe.publisher,
+      cooking_time: +newRecipe.cookingTime,
+      servings: +newRecipe.servings,
+      ingredients
+    };
+    console.log(recipe);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?key=${_config.KEY}`, recipe);
+    state.recipe = createRecipeObject(data);
+    addBookmark(state.recipe);
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.uploadRecipe = uploadRecipe;
 },{"regenerator-runtime/runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de","./helpers.js":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -2328,7 +2411,7 @@ try {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RESULTS_PER_PAGE = exports.TIMEOUT_SEC = exports.API_URL = void 0;
+exports.MODAL_CLOSE_SEC = exports.KEY = exports.RESULTS_PER_PAGE = exports.TIMEOUT_SEC = exports.API_URL = void 0;
 // Configuration file: static variables
 const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 exports.API_URL = API_URL;
@@ -2336,13 +2419,17 @@ const TIMEOUT_SEC = 10;
 exports.TIMEOUT_SEC = TIMEOUT_SEC;
 const RESULTS_PER_PAGE = 10;
 exports.RESULTS_PER_PAGE = RESULTS_PER_PAGE;
+const KEY = '078b6641-0fd6-478a-b094-a71c06e1544f';
+exports.KEY = KEY;
+const MODAL_CLOSE_SEC = 2.5;
+exports.MODAL_CLOSE_SEC = MODAL_CLOSE_SEC;
 },{}],"0e8dcd8a4e1c61cf18f78e1c2563655d":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getJSON = void 0;
+exports.AJAX = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -2356,11 +2443,16 @@ const timeout = function (s) {
   });
 };
 
-const getJSON = async function (url) {
+const AJAX = async function (url, uploadData = undefined) {
   try {
-    // const res = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
-    // const res = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bcb34');
-    const res = await Promise.race([fetch(url), timeout(_config.TIMEOUT_SEC)]);
+    const fetchPro = uploadData ? fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(uploadData)
+    }) : fetch(url);
+    const res = await Promise.race([fetchPro, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;
@@ -2368,8 +2460,42 @@ const getJSON = async function (url) {
     throw err; // Throwing an error will cause to 'reject' the Promise when it fails.
   }
 };
+/*
+export const getJSON = async function (url) {
+    try {
+        // const res = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
+        // const res = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bcb34');
+        const res = await Promise.race([fetch(url), timeout(TIMEOUT_SEC)]);
+        const data = await res.json();
+        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        return data;
+    } catch (err) {
+        throw err; // Throwing an error will cause to 'reject' the Promise when it fails.
+    }
+}
 
-exports.getJSON = getJSON;
+export const sendJSON = async function (url, uploadData) {
+    try {
+        // Sending data using 'fetch'
+        const fetchPro = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(uploadData)
+        });
+        const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+        const data = await res.json();
+        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        return data;
+    } catch (err) {
+        throw err; // Throwing an error will cause to 'reject' the Promise when it fails.
+    }
+}
+*/
+
+
+exports.AJAX = AJAX;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de"}],"bcae1aced0301b01ccacb3e6f7dfede8":[function(require,module,exports) {
 "use strict";
 
@@ -2467,7 +2593,10 @@ class RecipeView extends _View.default {
             </div>
           </div>
 
-          <div class="recipe__user-generated">
+          <div class="recipe__user-generated ${this._data.key ? '' : 'hidden'}">
+            <svg>
+              <use href="${_icons.default}#icon-user"></use>
+            </svg>
           </div>
           <button class="btn--round btn--bookmark">
             <svg class="">
@@ -3026,6 +3155,15 @@ class View {
     _defineProperty(this, "_data", void 0);
   }
 
+  /**
+   * Render the received object to the DOM
+   * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
+   * @param {boolean} [render=true] If false, create markup string instead of render to the DOM
+   * @returns {undefined | string} A markup string is returned if render=false
+   * @this {Object} View instance
+   * @author Damian Demasi
+   * @todo Finish implementation
+   */
   render(data, render = true) {
     if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
     this._data = data;
@@ -3213,10 +3351,13 @@ exports.default = void 0;
 
 var _View = _interopRequireDefault(require("./View.js"));
 
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+// Parcel 2.x
 class PreviewView extends _View.default {
   constructor(...args) {
     super(...args);
@@ -3235,6 +3376,11 @@ class PreviewView extends _View.default {
               <div class="preview__data">
                 <h4 class="preview__title">${this._data.title}</h4>
                 <p class="preview__publisher">${this._data.publisher}</p>
+                <div class="preview__user-generated ${this._data.key ? '' : 'hidden'}">
+                <svg>
+                  <use href="${_icons.default}#icon-user"></use>
+                </svg>
+                </div>
               </div>
             </a>
           </li>
@@ -3246,7 +3392,7 @@ class PreviewView extends _View.default {
 var _default = new PreviewView();
 
 exports.default = _default;
-},{"./View.js":"61b7a1b097e16436be3d54c2f1828c73"}],"d2063f3e7de2e4cdacfcb5eb6479db05":[function(require,module,exports) {
+},{"./View.js":"61b7a1b097e16436be3d54c2f1828c73","url:../../img/icons.svg":"c57a33f90f2566f4a1f7159959fdf43d"}],"d2063f3e7de2e4cdacfcb5eb6479db05":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3378,6 +3524,83 @@ class BookmarksView extends _View.default {
 var _default = new BookmarksView();
 
 exports.default = _default;
-},{"./View.js":"61b7a1b097e16436be3d54c2f1828c73","./previewView.js":"e4d6583325a8b6c9380670c4f233bf07"}]},{},["bc4ee9394fc0a7e56df583883c56fb00","f742298cca3abd874670f414999f2e6e","175e469a7ea7db1c8c0744d04372621f"], null)
+},{"./View.js":"61b7a1b097e16436be3d54c2f1828c73","./previewView.js":"e4d6583325a8b6c9380670c4f233bf07"}],"4dd83c2a08c1751220d223c54dc70016":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View = _interopRequireDefault(require("./View.js"));
+
+var _config = require("../config.js");
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// Parcel 2.x
+class AddRecipeView extends _View.default {
+  // This will be executed when the new instance of the class is created
+  constructor() {
+    super();
+
+    _defineProperty(this, "_parentElement", document.querySelector('.upload'));
+
+    _defineProperty(this, "_message", 'Recipe was successfully uploaded');
+
+    _defineProperty(this, "_window", document.querySelector('.add-recipe-window'));
+
+    _defineProperty(this, "_overlay", document.querySelector('.overlay'));
+
+    _defineProperty(this, "_btnOpen", document.querySelector('.nav__btn--add-recipe'));
+
+    _defineProperty(this, "_btnClose", document.querySelector('.btn--close-modal'));
+
+    this._addHandlerShowWindow();
+
+    this._addHandlerHideWindow();
+  }
+
+  toggleWindow() {
+    this._window.classList.toggle('hidden');
+
+    this._overlay.classList.toggle('hidden');
+  } // As showing/hiding the modal does not involves other classes or data, there is no need to create a handler or call to this method in the controller.js file
+
+
+  _addHandlerShowWindow() {
+    this._btnOpen.addEventListener('click', this.toggleWindow.bind(this));
+  }
+
+  _addHandlerHideWindow() {
+    this._btnClose.addEventListener('click', this.toggleWindow.bind(this));
+
+    this._overlay.addEventListener('click', this.toggleWindow.bind(this));
+  } // Publisher
+
+
+  addHandlerUpload(handler) {
+    this._parentElement.addEventListener('submit', function (e) {
+      e.preventDefault(); // This 'data' needs to be accessible by the model, through the controller, so it can be sent to another API. This is why this is a Publisher.
+
+      const dataArr = [...new FormData(this)]; // this === this._parentElement (inside the listener function)
+
+      const data = Object.fromEntries(dataArr);
+      handler(data);
+    });
+  }
+
+  _generateMarkup() {}
+
+}
+
+var _default = new AddRecipeView();
+
+exports.default = _default;
+},{"./View.js":"61b7a1b097e16436be3d54c2f1828c73","../config.js":"09212d541c5c40ff2bd93475a904f8de","url:../../img/icons.svg":"c57a33f90f2566f4a1f7159959fdf43d"}]},{},["bc4ee9394fc0a7e56df583883c56fb00","f742298cca3abd874670f414999f2e6e","175e469a7ea7db1c8c0744d04372621f"], null)
 
 //# sourceMappingURL=controller.3eb17507.js.map
